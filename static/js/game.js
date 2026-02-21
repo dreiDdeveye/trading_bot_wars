@@ -2,7 +2,6 @@
 
 let gameState = null;
 let tickInterval = null;
-let countdownInterval = null;
 let charts = {};
 let isPaused = false;
 let previousPrices = {};
@@ -74,14 +73,11 @@ const ASSET_COLORS = {
 /* ─── GAME LIFECYCLE ─────────────────────────────────── */
 
 async function startGame() {
-    document.getElementById("hero").classList.add("hidden");
-    document.getElementById("controls").classList.remove("hidden");
     document.getElementById("results-overlay").classList.add("hidden");
-    document.getElementById("game-grid").classList.add("hidden");
     document.getElementById("breaking-news").classList.add("hidden");
-    document.getElementById("combatants-roster").classList.remove("hidden");
-    document.getElementById("btn-pause").disabled = true;
+    document.getElementById("trade-feed").innerHTML = "";
     isPaused = false;
+    document.getElementById("btn-pause").textContent = "Pause";
 
     if (tickInterval) clearInterval(tickInterval);
 
@@ -90,31 +86,19 @@ async function startGame() {
     const resp = await fetch("/api/tick", { method: "POST" });
     gameState = await resp.json();
 
-    renderRoster(gameState.bots);
+    // Build icon map from bots
+    botIconMap = {};
+    gameState.bots.forEach(bot => {
+        botIconMap[bot.name] = bot.personality;
+    });
 
-    if (countdownInterval) clearInterval(countdownInterval);
-    let count = 3;
-    const cdEl = document.getElementById("countdown");
-    cdEl.textContent = count;
-    countdownInterval = setInterval(() => {
-        count--;
-        if (count <= 0) {
-            clearInterval(countdownInterval);
-            countdownInterval = null;
-            document.getElementById("combatants-roster").classList.add("hidden");
-            document.getElementById("game-grid").classList.remove("hidden");
-            document.getElementById("btn-pause").disabled = false;
-            initCharts(gameState);
-            updateAll(gameState);
-            startTicking();
-        } else {
-            cdEl.textContent = count;
-        }
-    }, 1000);
+    initCharts(gameState);
+    updateAll(gameState);
+    startTicking();
 }
 
 function startTicking() {
-    tickInterval = setInterval(doTick, 1500);
+    tickInterval = setInterval(doTick, 4000);
 }
 
 async function doTick() {
@@ -126,7 +110,6 @@ async function doTick() {
     if (gameState.game_over) {
         clearInterval(tickInterval);
         tickInterval = null;
-        document.getElementById("btn-pause").disabled = true;
         setTimeout(() => showFinalResults(gameState), 1500);
     }
 }
@@ -136,45 +119,10 @@ function togglePause() {
     document.getElementById("btn-pause").textContent = isPaused ? "Resume" : "Pause";
 }
 
-function goHome() {
-    if (tickInterval) clearInterval(tickInterval);
-    tickInterval = null;
-    if (countdownInterval) clearInterval(countdownInterval);
-    countdownInterval = null;
-    isPaused = false;
-    document.getElementById("controls").classList.add("hidden");
-    document.getElementById("game-grid").classList.add("hidden");
-    document.getElementById("combatants-roster").classList.add("hidden");
-    document.getElementById("breaking-news").classList.add("hidden");
+function closeResults() {
     document.getElementById("results-overlay").classList.add("hidden");
-    document.getElementById("hero").classList.remove("hidden");
-    document.getElementById("btn-pause").textContent = "Pause";
-    document.getElementById("btn-pause").disabled = true;
-    document.getElementById("trade-feed").innerHTML = "";
 }
 
-
-/* ─── ROSTER ─────────────────────────────────────────── */
-
-function renderRoster(bots) {
-    const grid = document.getElementById("roster-grid");
-    grid.innerHTML = "";
-    botIconMap = {};
-    bots.forEach(bot => {
-        botIconMap[bot.name] = bot.personality;
-        const card = document.createElement("div");
-        card.className = "roster-card";
-        card.innerHTML = `
-            <span class="roster-icon">${botAvatar(bot.personality, 'avatar-roster')}</span>
-            <div class="roster-info">
-                <h4 style="color:${bot.color}">${bot.name}</h4>
-                <p>"${bot.motto}"</p>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-    refreshIcons();
-}
 
 /* ─── CHARTS ─────────────────────────────────────────── */
 
@@ -478,5 +426,8 @@ function copyCA() {
     });
 }
 
-// Init hero icons on page load
-document.addEventListener("DOMContentLoaded", () => refreshIcons());
+// Auto-start game on page load
+document.addEventListener("DOMContentLoaded", () => {
+    refreshIcons();
+    startGame();
+});

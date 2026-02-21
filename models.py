@@ -28,23 +28,24 @@ class Asset:
     trend: float
     history: list = field(default_factory=list)
 
-    def tick(self, market_mood: float, events: list):
+    def tick(self, market_mood: float, events: list, ticks_per_round: int = 1):
         self.history.append(self.price)
-        shock = random.gauss(0, self.volatility * self.price * 0.05)
-        trend_pull = self.trend * self.price * 0.002
-        mood_effect = market_mood * self.price * 0.01
+        scale = 1.0 / ticks_per_round
+        shock = random.gauss(0, self.volatility * self.price * 0.05 * (scale ** 0.5))
+        trend_pull = self.trend * self.price * 0.002 * scale
+        mood_effect = market_mood * self.price * 0.01 * scale
         event_effect = 0
         for ev in events:
             if ev.target_asset == self.symbol or ev.target_asset == "ALL":
-                event_effect += ev.price_impact * self.price
+                event_effect += ev.price_impact * self.price * scale
         if len(self.history) > 5:
             avg = sum(self.history[-5:]) / 5
-            reversion = (avg - self.price) * 0.01
+            reversion = (avg - self.price) * 0.01 * scale
         else:
             reversion = 0
         self.price += shock + trend_pull + mood_effect + event_effect + reversion
         self.price = max(0.50, self.price)
-        self.trend += random.gauss(0, 0.05)
+        self.trend += random.gauss(0, 0.05 * scale)
         self.trend = max(-1, min(1, self.trend))
 
     @property

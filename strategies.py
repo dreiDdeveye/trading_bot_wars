@@ -278,7 +278,7 @@ def generate_taunt(bot, bots):
     taunts = [
         f"Hey {target.name}, is that a portfolio or a dumpster fire?",
         f"{target.name} trades like a goldfish with a credit card.",
-        f"My algorithm is so advanced, {target.name}'s bot just filed for bankruptcy.",
+        f"My strategy is so advanced, {target.name}'s account just filed for bankruptcy.",
         f"While {target.name} was sleeping, I was TRADING.",
         f"Imagine losing money in THIS market. Couldn't be me. *looks at {target.name}*",
         f"{target.name}, your strategy is basically 'buy high sell low' right?",

@@ -1,7 +1,7 @@
 /* ─── BASE ──────────────────────────────────────────────── */
 @font-face {
-    font-family: 'Caivero';
-    src: url('/static/fonts/Caivero.otf') format('opentype');
+    font-family: 'Fishel';
+    src: url('/static/fonts/Fishel.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -106,162 +106,19 @@ body {
     line-height: 1.6;
 }
 
-/* ─── HERO LANDING ─────────────────────────────────────── */
-#hero {
-    text-align: center;
-    padding: 48px 24px 56px;
-    max-width: 720px;
-    margin: 0 auto;
-    position: relative;
-}
-
-#hero::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background:
-        radial-gradient(ellipse at 50% 40%, rgba(224,64,48,0.06) 0%, transparent 60%),
-        radial-gradient(ellipse at 20% 80%, rgba(59,130,246,0.04) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(168,85,247,0.04) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
-}
-
-.hero-tagline {
-    color: var(--text-dim);
-    font-size: 0.82rem;
-    line-height: 1.7;
-    max-width: 480px;
-    margin: 0 auto 32px;
-    letter-spacing: 0.02em;
-}
-
-#hero-bots {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 32px;
-}
-
-.hero-bot {
+/* ─── BANNER EXTRAS (CA + Social) ─────────────────────── */
+#banner-extras {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 6px;
-    padding: 14px 4px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-left: 2px solid var(--text-dim);
-    border-radius: 6px;
-    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-    animation: fadeInUp 0.4s ease both;
-}
-
-.hero-bot:nth-child(1) { animation-delay: 0.05s; border-left-color: #ff5555; }
-.hero-bot:nth-child(2) { animation-delay: 0.1s; border-left-color: #55ff55; }
-.hero-bot:nth-child(3) { animation-delay: 0.15s; border-left-color: #55ffff; }
-.hero-bot:nth-child(4) { animation-delay: 0.2s; border-left-color: #ff55ff; }
-.hero-bot:nth-child(5) { animation-delay: 0.25s; border-left-color: #ffff55; }
-.hero-bot:nth-child(6) { animation-delay: 0.3s; border-left-color: #ffffff; }
-.hero-bot:nth-child(7) { animation-delay: 0.35s; border-left-color: #5588ff; }
-.hero-bot:nth-child(8) { animation-delay: 0.4s; border-left-color: #06b6d4; }
-.hero-bot:nth-child(9) { animation-delay: 0.45s; border-left-color: #8b5cf6; }
-
-.hero-bot:hover {
-    transform: translateY(-2px);
-    border-color: rgba(255,255,255,0.15);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-}
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.hero-bot .lucide {
-    width: 22px;
-    height: 22px;
-    color: var(--text-dim);
-}
-
-.hero-bot .bot-avatar {
-    margin-bottom: 2px;
-}
-
-.hero-bot span {
-    font-size: 0.58rem;
-    font-weight: 700;
-    color: var(--text-dim);
-    letter-spacing: 0.02em;
-}
-
-.hero-stats {
-    display: flex;
     justify-content: center;
-    gap: 0;
-    margin-bottom: 36px;
-}
-
-.hero-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    padding: 0 24px;
-    border-right: 1px solid var(--border);
-}
-
-.hero-stat:last-child {
-    border-right: none;
-}
-
-.hero-stat-val {
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: var(--text);
-}
-
-.hero-stat-label {
-    font-size: 0.65rem;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-#btn-start {
-    padding: 14px 52px;
-    border: 1px solid #e04030;
-    border-radius: 4px;
-    background: transparent;
-    color: #e04030;
-    font-family: 'Caivero', 'Impact', sans-serif;
-    font-size: 1.2rem;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
-    animation: btnGlow 3s ease-in-out infinite;
-}
-
-#btn-start:hover {
-    background: #e04030;
-    color: var(--bg);
-    box-shadow: 0 0 24px rgba(224,64,48,0.3);
-    animation: none;
-}
-
-@keyframes btnGlow {
-    0%, 100% { box-shadow: 0 0 8px rgba(224,64,48,0.1); }
-    50% { box-shadow: 0 0 20px rgba(224,64,48,0.25); }
+    gap: 16px;
+    padding: 6px 20px;
+    border-bottom: 1px solid var(--border);
 }
 
 #social-links {
     display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 20px;
+    gap: 10px;
 }
 
 .social-link {
@@ -376,11 +233,6 @@ body {
     cursor: not-allowed;
 }
 
-#btn-new-game {
-    border-color: var(--green) !important;
-    color: var(--green) !important;
-}
-
 #round-display {
     font-weight: 700;
     font-size: 0.9rem;
@@ -402,66 +254,7 @@ body {
 #mood-display.neutral { color: var(--text-dim); border: 1px solid var(--border); }
 
 
-/* ─── COMBATANTS ROSTER ────────────────────────────────── */
-#combatants-roster {
-    padding: 24px;
-    text-align: center;
-}
-
-#combatants-roster h2 {
-    font-family: 'Caivero', 'Impact', sans-serif;
-    font-size: 1.4rem;
-    color: var(--text);
-    margin-bottom: 16px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-#roster-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 8px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.roster-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.roster-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 6px;
-    background: rgba(255,255,255,0.04);
-}
-
-.roster-info h4 {
-    font-size: 0.82rem;
-    font-weight: 700;
-}
-
-.roster-info p {
-    color: var(--text-dim);
-    font-size: 0.68rem;
-    font-style: italic;
-}
-
-.roster-hint {
-    color: var(--text-dim);
-    margin-top: 16px;
-    font-size: 0.85rem;
-}
+/* Roster section removed — game auto-starts */
 
 /* ─── MAIN GAME GRID ──────────────────────────────────── */
 #game-grid {
@@ -819,10 +612,32 @@ body {
     max-height: 90vh;
     display: flex;
     flex-direction: column;
+    position: relative;
+}
+
+#results-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    z-index: 1;
+}
+
+#results-close:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.08);
 }
 
 #results-content h1 {
-    font-family: 'Caivero', 'Impact', sans-serif;
+    font-family: 'Fishel', 'Impact', sans-serif;
     font-size: 1.5rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -950,25 +765,7 @@ body {
     font-size: 0.75rem;
 }
 
-#results-content > button {
-    flex-shrink: 0;
-    padding: 10px 32px;
-    border: 1px solid var(--green);
-    border-radius: 4px;
-    background: transparent;
-    color: var(--green);
-    font-family: inherit;
-    font-size: 0.85rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.15s;
-    margin-top: 14px;
-}
-
-#results-content > button:hover {
-    background: var(--green);
-    color: var(--bg);
-}
+/* Play Again button removed */
 
 /* ─── RESPONSIVE ───────────────────────────────────────── */
 @media (max-width: 900px) {
@@ -989,15 +786,5 @@ body {
     #controls {
         gap: 8px;
         padding: 8px 12px;
-    }
-    #roster-grid {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    }
-    #hero-bots {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-    }
-    .hero-stat {
-        padding: 0 16px;
     }
 }

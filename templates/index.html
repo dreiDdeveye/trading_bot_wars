@@ -14,27 +14,8 @@
         <img src="/static/img/clawtopia.png" alt="CLAWTOPIA" class="banner-logo">
     </header>
 
-    <!-- LANDING HERO (visible before game) -->
-    <section id="hero">
-        <p class="hero-tagline">9 clawdbots. $1,000 each. first to $10,000 takes it all.</p>
-        <div id="hero-bots">
-            <div class="hero-bot"><img src="/static/img/hyperclaw-ai.png" class="bot-avatar avatar-hero" alt=""><span>HYPERCLAW AI</span></div>
-            <div class="hero-bot"><img src="/static/img/clawcore.webp" class="bot-avatar avatar-hero" alt=""><span>CLAWCORE</span></div>
-            <div class="hero-bot"><img src="/static/img/claw-labs.png" class="bot-avatar avatar-hero" alt=""><span>CLAW LABS</span></div>
-            <div class="hero-bot"><img src="/static/img/apex.png" class="bot-avatar avatar-hero" alt=""><span>APEX</span></div>
-            <div class="hero-bot"><img src="/static/img/neuroclaw.jpg" class="bot-avatar avatar-hero" alt=""><span>NEUROCLAW</span></div>
-            <div class="hero-bot"><img src="/static/img/neural-claw.png" class="bot-avatar avatar-hero" alt=""><span>NEURAL CLAW</span></div>
-            <div class="hero-bot"><img src="/static/img/cyberlobster.png" class="bot-avatar avatar-hero" alt=""><span>CYBERLOBSTER</span></div>
-            <div class="hero-bot"><img src="/static/img/metaclaw.jpg" class="bot-avatar avatar-hero" alt=""><span>METACLAW</span></div>
-            <div class="hero-bot"><img src="/static/img/clawops.png" class="bot-avatar avatar-hero" alt=""><span>CLAWOPS</span></div>
-        </div>
-        <div class="hero-stats">
-            <div class="hero-stat"><span class="hero-stat-val">9</span><span class="hero-stat-label">bots</span></div>
-            <div class="hero-stat"><span class="hero-stat-val">$1,000</span><span class="hero-stat-label">each</span></div>
-            <div class="hero-stat"><span class="hero-stat-val">$10,000</span><span class="hero-stat-label">target</span></div>
-            <div class="hero-stat"><span class="hero-stat-val">30</span><span class="hero-stat-label">rounds</span></div>
-        </div>
-        <button id="btn-start" onclick="startGame()">Start Game</button>
+    <!-- CA & SOCIAL (always visible in banner area) -->
+    <div id="banner-extras">
         <div id="ca-box" onclick="copyCA()">
             <span class="ca-label">CA:</span>
             <span class="ca-address" id="ca-text">TBA</span>
@@ -44,29 +25,20 @@
             <a href="#" class="social-link" title="Twitter / X"><i data-lucide="twitter"></i></a>
             <a href="#" class="social-link" title="Telegram"><i data-lucide="send"></i></a>
         </div>
-    </section>
-
-    <!-- CONTROLS (hidden until game starts) -->
-    <div id="controls" class="hidden">
-        <button id="btn-back" onclick="goHome()">Back</button>
-        <button id="btn-new-game" onclick="startGame()">New Game</button>
-        <button id="btn-pause" onclick="togglePause()" disabled>Pause</button>
-        <span id="round-display">Round 0 / 30</span>
-        <span id="mood-display">Market: NEUTRAL</span>
     </div>
 
-    <!-- PRE-GAME: Combatants Roster -->
-    <section id="combatants-roster" class="hidden">
-        <h2>Combatants</h2>
-        <div id="roster-grid"></div>
-        <p class="roster-hint">Starting in <span id="countdown">3</span>...</p>
-    </section>
+    <!-- CONTROLS -->
+    <div id="controls">
+        <button id="btn-pause" onclick="togglePause()">Pause</button>
+        <span id="round-display">Round 0 / 100</span>
+        <span id="mood-display">Market: NEUTRAL</span>
+    </div>
 
     <!-- BREAKING NEWS BANNER -->
     <div id="breaking-news" class="hidden"></div>
 
     <!-- MAIN GAME GRID -->
-    <main id="game-grid" class="hidden">
+    <main id="game-grid">
         <!-- LEFT: Market -->
         <section id="market-panel">
             <h2>Market</h2>
@@ -104,6 +76,7 @@
     <!-- FINAL RESULTS OVERLAY -->
     <div id="results-overlay" class="hidden">
         <div id="results-content">
+            <button id="results-close" onclick="closeResults()">&times;</button>
             <h1>FINAL BATTLE RESULTS</h1>
             <div id="results-scroll">
                 <div id="champion-box"></div>
@@ -111,7 +84,7 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Bot</th>
+                            <th>Trader</th>
                             <th class="num">Net Worth</th>
                             <th class="num">P&L</th>
                             <th class="num">Trades</th>
@@ -123,7 +96,6 @@
                 <div id="awards-box"></div>
                 <div id="final-market"></div>
             </div>
-            <button onclick="startGame()">Play Again</button>
         </div>
     </div>
 

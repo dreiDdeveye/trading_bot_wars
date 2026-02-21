@@ -1,7 +1,7 @@
 """Game engine — simulation logic with JSON-serializable state output."""
 
 import random
-from config import TOTAL_ROUNDS, STARTING_CASH, ASSETS_TEMPLATE, EVENT_POOL, BOT_PROFILES, WIN_TARGET
+from config import TOTAL_ROUNDS, STARTING_CASH, ASSETS_TEMPLATE, EVENT_POOL, BOT_PROFILES, WIN_TARGET, TICKS_PER_ROUND
 from models import Asset, MarketEvent, TradeAction, BotPersonality, Bot
 import strategies
 
@@ -20,6 +20,7 @@ class GameEngine:
             )
         self.bots = [Bot(p, STARTING_CASH) for p in BotPersonality]
         self.round = 0
+        self.sub_tick = 0
         self.game_over = False
         self.win_reason = None
         self.active_events: list[MarketEvent] = []
@@ -29,39 +30,52 @@ class GameEngine:
         self.new_event = None
 
     def tick(self):
-        if self.round >= TOTAL_ROUNDS:
-            self.game_over = True
-            self.win_reason = self.win_reason or "rounds_complete"
+        if self.game_over:
             return self.get_state()
 
-        self.round += 1
-        self.new_event = self._generate_events()
-        self._update_market_mood()
+        # On first sub-tick of a new round, advance the round counter
+        if self.sub_tick == 0:
+            self.round += 1
+            if self.round > TOTAL_ROUNDS:
+                self.game_over = True
+                self.win_reason = self.win_reason or "rounds_complete"
+                return self.get_state()
+            self.new_event = self._generate_events()
+            self._update_market_mood()
+        else:
+            self.new_event = None
 
+        # Always: update asset prices (scaled for sub-tick)
         for asset in self.assets.values():
-            asset.tick(self.market_mood, self.active_events)
+            asset.tick(self.market_mood, self.active_events, TICKS_PER_ROUND)
 
+        # Always: pick 2-3 random traders to act this sub-tick
         self.round_actions = []
-        shuffled = list(self.bots)
-        random.shuffle(shuffled)
-        for bot in shuffled:
+        num_traders = random.randint(2, 4)
+        trading_bots = random.sample(self.bots, min(num_traders, len(self.bots)))
+        for bot in trading_bots:
             actions = strategies.decide(bot, self.assets, self.round, self.bots, self.active_events)
             self.round_actions.extend(actions)
 
-        for bot in self.bots:
-            bot.net_worth_history.append(bot.net_worth(self.assets))
+        self.sub_tick += 1
 
-        # Check win condition: first bot to hit target
-        for bot in sorted(self.bots, key=lambda b: b.net_worth(self.assets), reverse=True):
-            if bot.net_worth(self.assets) >= WIN_TARGET:
+        # End of round: record history, check win conditions
+        if self.sub_tick >= TICKS_PER_ROUND:
+            self.sub_tick = 0
+
+            for bot in self.bots:
+                bot.net_worth_history.append(bot.net_worth(self.assets))
+
+            for bot in sorted(self.bots, key=lambda b: b.net_worth(self.assets), reverse=True):
+                if bot.net_worth(self.assets) >= WIN_TARGET:
+                    self.game_over = True
+                    self.win_reason = "target_reached"
+                    break
+
+            if self.round >= TOTAL_ROUNDS:
                 self.game_over = True
-                self.win_reason = "target_reached"
-                break
-
-        if self.round >= TOTAL_ROUNDS:
-            self.game_over = True
-            if not self.win_reason:
-                self.win_reason = "rounds_complete"
+                if not self.win_reason:
+                    self.win_reason = "rounds_complete"
 
         return self.get_state()
 
