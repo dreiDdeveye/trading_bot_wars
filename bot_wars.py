@@ -125,7 +125,6 @@ class BotPersonality(Enum):
     DEGEN       = "degen"
     SNIPER      = "sniper"
     WHALE       = "whale"
-    SABOTEUR    = "saboteur"
 
 BOT_PROFILES = {
     BotPersonality.AGGRESSIVE: {
@@ -153,7 +152,7 @@ BOT_PROFILES = {
         "trade_size": 0.3,
     },
     BotPersonality.CONTRARIAN: {
-        "name": "CHAOS BARON",
+        "name": "APEX",
         "icon": "🎭",
         "color": C.MAGENTA,
         "motto": "When they zig, I zag.",
@@ -183,14 +182,6 @@ BOT_PROFILES = {
         "motto": "I AM the market.",
         "risk_tolerance": 0.55,
         "trade_size": 0.35,
-    },
-    BotPersonality.SABOTEUR: {
-        "name": "THE JESTER",
-        "icon": "🃏",
-        "color": C.ORANGE,
-        "motto": "If I can't win, nobody can.",
-        "risk_tolerance": 0.7,
-        "trade_size": 0.3,
     },
 }
 
@@ -257,9 +248,6 @@ class Bot:
             actions = self._strategy_sniper(assets, round_num, active_events)
         elif self.personality == BotPersonality.WHALE:
             actions = self._strategy_whale(assets, round_num, all_bots)
-        elif self.personality == BotPersonality.SABOTEUR:
-            actions = self._strategy_saboteur(assets, round_num, all_bots)
-
         # Maybe taunt
         if random.random() < 0.15:
             actions.append(self._generate_taunt(all_bots))
@@ -487,36 +475,6 @@ class Bot:
                 self.execute_sell(asset, sell)
         return actions
 
-    def _strategy_saboteur(self, assets, rnd, bots):
-        actions = []
-        # Buy what the leader is selling, sell what they're buying (approximate)
-        leader = max(bots, key=lambda b: b.net_worth(assets) if b != self else 0)
-        leader_holdings = leader.holdings
-        for sym, asset in assets.items():
-            held = self.holdings.get(sym, 0)
-            leader_has = leader_holdings.get(sym, 0)
-            if leader_has > 0 and held == 0 and self.cash > asset.price * 2:
-                # Counter the leader
-                qty = int((self.cash * 0.3) / asset.price)
-                if qty > 0 and random.random() < 0.4:
-                    actions.append(TradeAction(self.name, "BUY", sym, qty, asset.price,
-                        f"Mirroring {leader.name}'s {sym} position... for now."))
-                    self.execute_buy(asset, qty)
-            elif leader_has == 0 and held > 0 and random.random() < 0.3:
-                actions.append(TradeAction(self.name, "SELL", sym, held, asset.price,
-                    f"{leader.name} dumped {sym}? I'll dump harder!"))
-                self.execute_sell(asset, held)
-
-        if random.random() < 0.2:
-            actions.append(TradeAction(self.name, "SABOTAGE", "", 0, 0,
-                random.choice([
-                    f"*whispers FUD about {leader.name}'s positions*",
-                    "Spreading rumors in the dark pools...",
-                    "If I'm going down, I'm taking everyone with me!",
-                    f"Nice portfolio, {leader.name}. Would be a shame if someone... disrupted it.",
-                ])))
-        return actions
-
     def _generate_taunt(self, bots) -> TradeAction:
         others = [b for b in bots if b != self]
         target = random.choice(others) if others else self
@@ -705,7 +663,7 @@ class TradingBotWars:
             pnl_color = C.GREEN if pnl >= 0 else C.RED
             bar_len = max(0, int((nw / (STARTING_CASH * 3)) * 30))
             bar = "█" * bar_len
-            rank_icon = ["👑", "🥈", "🥉", "4.", "5.", "6.", "7.", "8."][i]
+            rank_icon = ["👑", "🥈", "🥉", "4.", "5.", "6.", "7.", "8.", "9."][i]
             print(f"    {rank_icon} {bot.color}{bot.icon} {bot.name:15s}{C.RESET} "
                   f"${nw:>10,.2f} {pnl_color}({pnl:+,.2f}){C.RESET} "
                   f" {C.GREEN}{bar}{C.RESET}")

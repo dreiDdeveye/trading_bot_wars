@@ -15,7 +15,6 @@ class BotPersonality(Enum):
     DEGEN = "degen"
     SNIPER = "sniper"
     WHALE = "whale"
-    SABOTEUR = "saboteur"
     SCALPER = "scalper"
     DIAMOND_HANDS = "diamond_hands"
 

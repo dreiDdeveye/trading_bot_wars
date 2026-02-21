@@ -59,7 +59,7 @@ BOT_PROFILES = {
         "trade_size": 0.3,
     },
     "contrarian": {
-        "name": "JOSEPH",
+        "name": "APEX",
         "icon": "\U0001f3ad",
         "color": "#ff55ff",
         "motto": "When they zig, I zag.",
@@ -89,14 +89,6 @@ BOT_PROFILES = {
         "motto": "I AM the market.",
         "risk_tolerance": 0.55,
         "trade_size": 0.35,
-    },
-    "saboteur": {
-        "name": "JOSEPH",
-        "icon": "\U0001f0cf",
-        "color": "#ff8800",
-        "motto": "If I can't win, nobody can.",
-        "risk_tolerance": 0.7,
-        "trade_size": 0.3,
     },
     "scalper": {
         "name": "METACLAW",

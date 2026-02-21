@@ -9,6 +9,8 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+.hidden { display: none !important; }
+
 :root {
     --bg: #0a0e17;
     --bg-card: #111827;
@@ -122,7 +124,7 @@ body {
 
 #hero-bots {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     margin-bottom: 32px;
 }
@@ -258,19 +260,6 @@ body {
 #mood-display.panic { color: var(--red); border: 1px solid var(--red); background: rgba(239,68,68,0.06); }
 #mood-display.neutral { color: var(--text-dim); border: 1px solid var(--border); }
 
-#speed-control {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-dim);
-    font-size: 0.75rem;
-}
-
-#speed-control input[type="range"] {
-    width: 90px;
-    accent-color: var(--blue);
-}
 
 /* ─── COMBATANTS ROSTER ────────────────────────────────── */
 #combatants-roster {
@@ -840,9 +829,6 @@ body {
     color: var(--bg);
 }
 
-/* ─── UTILITIES ────────────────────────────────────────── */
-.hidden { display: none !important; }
-
 /* ─── RESPONSIVE ───────────────────────────────────────── */
 @media (max-width: 900px) {
     #game-grid {
@@ -867,7 +853,7 @@ body {
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
     #hero-bots {
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 6px;
     }
     .hero-stats {

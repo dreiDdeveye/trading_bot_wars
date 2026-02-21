@@ -14,14 +14,13 @@ def decide(bot, assets, round_num, all_bots, active_events):
         BotPersonality.DEGEN: strategy_degen,
         BotPersonality.SNIPER: strategy_sniper,
         BotPersonality.WHALE: strategy_whale,
-        BotPersonality.SABOTEUR: strategy_saboteur,
         BotPersonality.SCALPER: strategy_scalper,
         BotPersonality.DIAMOND_HANDS: strategy_diamond_hands,
     }
     fn = dispatch[bot.personality]
     if bot.personality == BotPersonality.SNIPER:
         actions = fn(bot, assets, round_num, active_events)
-    elif bot.personality in (BotPersonality.WHALE, BotPersonality.SABOTEUR):
+    elif bot.personality == BotPersonality.WHALE:
         actions = fn(bot, assets, round_num, all_bots)
     else:
         actions = fn(bot, assets, round_num)
@@ -215,35 +214,6 @@ def strategy_whale(bot, assets, rnd, bots):
             actions.append(TradeAction(bot.name, "SELL", sym, sell, asset.price,
                 f"Redistributing {sym}. The market bends to my will."))
             bot.execute_sell(asset, sell)
-    return actions
-
-
-def strategy_saboteur(bot, assets, rnd, bots):
-    actions = []
-    leader = max(bots, key=lambda b: b.net_worth(assets) if b != bot else 0)
-    leader_holdings = leader.holdings
-    for sym, asset in assets.items():
-        held = bot.holdings.get(sym, 0)
-        leader_has = leader_holdings.get(sym, 0)
-        if leader_has > 0 and held == 0 and bot.cash > asset.price * 2:
-            qty = int((bot.cash * 0.3) / asset.price)
-            if qty > 0 and random.random() < 0.4:
-                actions.append(TradeAction(bot.name, "BUY", sym, qty, asset.price,
-                    f"Mirroring {leader.name}'s {sym} position... for now."))
-                bot.execute_buy(asset, qty)
-        elif leader_has == 0 and held > 0 and random.random() < 0.3:
-            actions.append(TradeAction(bot.name, "SELL", sym, held, asset.price,
-                f"{leader.name} dumped {sym}? I'll dump harder!"))
-            bot.execute_sell(asset, held)
-
-    if random.random() < 0.2:
-        actions.append(TradeAction(bot.name, "SABOTAGE", "", 0, 0,
-            random.choice([
-                f"*whispers FUD about {leader.name}'s positions*",
-                "Spreading rumors in the dark pools...",
-                "If I'm going down, I'm taking everyone with me!",
-                f"Nice portfolio, {leader.name}. Would be a shame if someone... disrupted it.",
-            ])))
     return actions
 
 

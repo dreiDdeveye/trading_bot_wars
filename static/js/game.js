@@ -2,6 +2,7 @@
 
 let gameState = null;
 let tickInterval = null;
+let countdownInterval = null;
 let charts = {};
 let isPaused = false;
 let previousPrices = {};
@@ -17,7 +18,6 @@ const BOT_ICONS = {
     degen: 'crown',
     sniper: 'crosshair',
     whale: 'anchor',
-    saboteur: 'bomb',
     scalper: 'timer',
     diamond_hands: 'gem',
 };
@@ -30,7 +30,6 @@ const BOT_AVATARS = {
     degen: '/static/img/neuroclaw.jpg',
     sniper: '/static/img/neural-claw.png',
     whale: '/static/img/cyberlobster.png',
-    saboteur: '/static/img/apex.png',
     scalper: '/static/img/metaclaw.jpg',
     diamond_hands: '/static/img/clawops.png',
 };
@@ -53,7 +52,7 @@ const RANK_ICONS = [
     icon('trophy', 'icon-gold'),
     icon('medal', 'icon-silver'),
     icon('award', 'icon-bronze'),
-    "4", "5", "6", "7", "8", "9", "10"
+    "4", "5", "6", "7", "8", "9"
 ];
 
 const ACTION_ICONS = {
@@ -93,13 +92,15 @@ async function startGame() {
 
     renderRoster(gameState.bots);
 
+    if (countdownInterval) clearInterval(countdownInterval);
     let count = 3;
     const cdEl = document.getElementById("countdown");
     cdEl.textContent = count;
-    const cdInterval = setInterval(() => {
+    countdownInterval = setInterval(() => {
         count--;
         if (count <= 0) {
-            clearInterval(cdInterval);
+            clearInterval(countdownInterval);
+            countdownInterval = null;
             document.getElementById("combatants-roster").classList.add("hidden");
             document.getElementById("game-grid").classList.remove("hidden");
             document.getElementById("btn-pause").disabled = false;
@@ -113,8 +114,7 @@ async function startGame() {
 }
 
 function startTicking() {
-    const speed = parseInt(document.getElementById("speed").value) || 1500;
-    tickInterval = setInterval(doTick, speed);
+    tickInterval = setInterval(doTick, 1500);
 }
 
 async function doTick() {
@@ -139,6 +139,8 @@ function togglePause() {
 function goHome() {
     if (tickInterval) clearInterval(tickInterval);
     tickInterval = null;
+    if (countdownInterval) clearInterval(countdownInterval);
+    countdownInterval = null;
     isPaused = false;
     document.getElementById("controls").classList.add("hidden");
     document.getElementById("game-grid").classList.add("hidden");
@@ -151,12 +153,6 @@ function goHome() {
     document.getElementById("trade-feed").innerHTML = "";
 }
 
-document.getElementById("speed").addEventListener("input", () => {
-    if (tickInterval && !isPaused) {
-        clearInterval(tickInterval);
-        startTicking();
-    }
-});
 
 /* ─── ROSTER ─────────────────────────────────────────── */
 
