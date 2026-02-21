@@ -1,11 +1,4 @@
 /* ─── BASE ──────────────────────────────────────────────── */
-@font-face {
-    font-family: 'Fishel';
-    src: url('/static/fonts/Fishel.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -30,7 +23,7 @@
 body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-family: 'Orbitron', sans-serif;
     font-size: 14px;
     line-height: 1.5;
     min-height: 100vh;
@@ -637,11 +630,11 @@ body {
 }
 
 #results-content h1 {
-    font-family: 'Fishel', 'Impact', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     font-size: 1.5rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: #ffffff;
     margin-bottom: 12px;
     flex-shrink: 0;
 }

@@ -288,7 +288,7 @@ function updateLeaderboard(state) {
         row.innerHTML = `
             <span class="lb-rank">${rankIcon}</span>
             <span class="lb-icon">${botAvatar(bot.personality, 'avatar-lb')}</span>
-            <span class="lb-name" style="color:${bot.color}">${bot.name}</span>
+            <span class="lb-name" style="color:#ffffff">${bot.name}</span>
             <span class="lb-nw">$${formatNum(bot.net_worth)}</span>
             <span class="lb-pnl ${pnlClass}">${bot.pnl >= 0 ? "+" : ""}$${formatNum(bot.pnl)}</span>
             <div class="lb-bar-wrap"><div class="lb-bar ${barClass}" style="width:${barPct}%"></div></div>
@@ -316,7 +316,7 @@ function updateTradeFeed(state) {
         const botPersonality = botIconMap[action.bot_name] || '';
         entry.innerHTML = `
             <span>${actionIcon}</span>
-            <span class="feed-bot" style="color:${action.bot_color}">${botAvatar(botPersonality, 'avatar-feed')} ${action.bot_name}</span>
+            <span class="feed-bot" style="color:#ffffff">${botAvatar(botPersonality, 'avatar-feed')} ${action.bot_name}</span>
             <span class="feed-action">${actionText}</span>
             <span class="feed-comment">${action.commentary}</span>
         `;
@@ -350,7 +350,7 @@ function showFinalResults(state) {
     const champBox = document.getElementById("champion-box");
     champBox.innerHTML = `
         <div class="champ-icon">${botAvatar(champPersonality, 'avatar-champ')}</div>
-        <div class="champ-name" style="color:${aw.champion.color}">${aw.champion.name}</div>
+        <div class="champ-name" style="color:#ffffff">${aw.champion.name}</div>
         <div class="champ-stats">
             Net Worth: $${formatNum(aw.champion.net_worth)} |
             P&L: <span class="${aw.champion.pnl >= 0 ? 'price-up' : 'price-down'}">
