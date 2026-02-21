@@ -43,7 +43,7 @@ BOT_PROFILES = {
         "trade_size": 0.4,
     },
     "cautious": {
-        "name": "IRON TURTLE",
+        "name": "CLAWCORE",
         "icon": "\U0001f422",
         "color": "#55ff55",
         "motto": "Slow and steady wins the war.",
@@ -59,7 +59,7 @@ BOT_PROFILES = {
         "trade_size": 0.3,
     },
     "contrarian": {
-        "name": "CHAOS BARON",
+        "name": "JOSEPH",
         "icon": "\U0001f3ad",
         "color": "#ff55ff",
         "motto": "When they zig, I zag.",
@@ -67,7 +67,7 @@ BOT_PROFILES = {
         "trade_size": 0.25,
     },
     "degen": {
-        "name": "YOLO KING",
+        "name": "NEUROCLAW",
         "icon": "\U0001f451",
         "color": "#ffff55",
         "motto": "ALL IN OR NOTHING. THIS IS THE WAY.",
@@ -91,7 +91,7 @@ BOT_PROFILES = {
         "trade_size": 0.35,
     },
     "saboteur": {
-        "name": "THE JESTER",
+        "name": "JOSEPH",
         "icon": "\U0001f0cf",
         "color": "#ff8800",
         "motto": "If I can't win, nobody can.",
@@ -99,7 +99,7 @@ BOT_PROFILES = {
         "trade_size": 0.3,
     },
     "scalper": {
-        "name": "TICK HUNTER",
+        "name": "METACLAW",
         "icon": "\U0001f570",
         "color": "#06b6d4",
         "motto": "A penny here, a penny there — real money.",
@@ -107,7 +107,7 @@ BOT_PROFILES = {
         "trade_size": 0.15,
     },
     "diamond_hands": {
-        "name": "HODL MONK",
+        "name": "CLAWOPS",
         "icon": "\U0001f48e",
         "color": "#8b5cf6",
         "motto": "These hands don't fold.",

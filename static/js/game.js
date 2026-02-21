@@ -56,6 +56,8 @@ const ASSET_COLORS = {
 /* ─── GAME LIFECYCLE ─────────────────────────────────── */
 
 async function startGame() {
+    document.getElementById("hero").classList.add("hidden");
+    document.getElementById("controls").classList.remove("hidden");
     document.getElementById("results-overlay").classList.add("hidden");
     document.getElementById("game-grid").classList.add("hidden");
     document.getElementById("breaking-news").classList.add("hidden");
@@ -438,3 +440,6 @@ function showFinalResults(state) {
 function formatNum(n) {
     return Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
+
+// Init hero icons on page load
+document.addEventListener("DOMContentLoaded", () => refreshIcons());

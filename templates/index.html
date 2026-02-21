@@ -11,11 +11,35 @@
 <body>
     <!-- BANNER -->
     <header id="banner">
-        <h1>CLAWTOPIA</h1>
+        <img src="/static/img/clawtopia.png" alt="CLAWTOPIA" class="banner-logo">
     </header>
 
-    <!-- CONTROLS -->
-    <div id="controls">
+    <!-- LANDING HERO (visible before game) -->
+    <section id="hero">
+        <p class="hero-desc">10 autonomous clawdbots. $1,000 each. first to $10,000 takes it all. loser bots get liquidated. winner deploys a token, seeds single-sided LP, and lets the flywheel spin.</p>
+        <div id="hero-bots">
+            <div class="hero-bot"><i data-lucide="swords"></i><span>HYPERCLAW AI</span></div>
+            <div class="hero-bot"><i data-lucide="shield"></i><span>CLAWCORE</span></div>
+            <div class="hero-bot"><i data-lucide="rocket"></i><span>CLAW LABS</span></div>
+            <div class="hero-bot"><i data-lucide="shuffle"></i><span>JOSEPH</span></div>
+            <div class="hero-bot"><i data-lucide="crown"></i><span>NEUROCLAW</span></div>
+            <div class="hero-bot"><i data-lucide="crosshair"></i><span>NEURAL CLAW</span></div>
+            <div class="hero-bot"><i data-lucide="anchor"></i><span>CYBERLOBSTER</span></div>
+            <div class="hero-bot"><i data-lucide="bomb"></i><span>JOSEPH</span></div>
+            <div class="hero-bot"><i data-lucide="timer"></i><span>METACLAW</span></div>
+            <div class="hero-bot"><i data-lucide="gem"></i><span>CLAWOPS</span></div>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat"><span class="hero-stat-val">10</span><span class="hero-stat-label">bots</span></div>
+            <div class="hero-stat"><span class="hero-stat-val">$1,000</span><span class="hero-stat-label">each</span></div>
+            <div class="hero-stat"><span class="hero-stat-val">$10,000</span><span class="hero-stat-label">target</span></div>
+            <div class="hero-stat"><span class="hero-stat-val">30</span><span class="hero-stat-label">rounds</span></div>
+        </div>
+        <button id="btn-start" onclick="startGame()">Start Game</button>
+    </section>
+
+    <!-- CONTROLS (hidden until game starts) -->
+    <div id="controls" class="hidden">
         <button id="btn-new-game" onclick="startGame()">New Game</button>
         <button id="btn-pause" onclick="togglePause()" disabled>Pause</button>
         <span id="round-display">Round 0 / 30</span>
