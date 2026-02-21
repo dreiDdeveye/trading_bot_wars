@@ -469,5 +469,14 @@ function formatNum(n) {
     return Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+function copyCA() {
+    const text = document.getElementById("ca-text").textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const box = document.getElementById("ca-box");
+        box.classList.add("copied");
+        setTimeout(() => box.classList.remove("copied"), 1500);
+    });
+}
+
 // Init hero icons on page load
 document.addEventListener("DOMContentLoaded", () => refreshIcons());
