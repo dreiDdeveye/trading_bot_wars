@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clawtopia</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+    <!-- BANNER -->
+    <header id="banner">
+        <h1>CLAWTOPIA</h1>
+    </header>
+
+    <!-- CONTROLS -->
+    <div id="controls">
+        <button id="btn-new-game" onclick="startGame()">New Game</button>
+        <button id="btn-pause" onclick="togglePause()" disabled>Pause</button>
+        <span id="round-display">Round 0 / 30</span>
+        <span id="mood-display">Market: NEUTRAL</span>
+        <span id="speed-control">
+            <label for="speed">Speed:</label>
+            <input type="range" id="speed" min="200" max="3000" value="1500" step="100">
+        </span>
+    </div>
+
+    <!-- PRE-GAME: Combatants Roster -->
+    <section id="combatants-roster" class="hidden">
+        <h2>Combatants</h2>
+        <div id="roster-grid"></div>
+        <p class="roster-hint">Starting in <span id="countdown">3</span>...</p>
+    </section>
+
+    <!-- BREAKING NEWS BANNER -->
+    <div id="breaking-news" class="hidden"></div>
+
+    <!-- MAIN GAME GRID -->
+    <main id="game-grid" class="hidden">
+        <!-- LEFT: Market -->
+        <section id="market-panel">
+            <h2>Market</h2>
+            <table id="asset-table">
+                <thead>
+                    <tr>
+                        <th>Asset</th>
+                        <th>Name</th>
+                        <th class="num">Price</th>
+                        <th class="num">Change</th>
+                    </tr>
+                </thead>
+                <tbody id="asset-tbody"></tbody>
+            </table>
+            <div id="charts-container"></div>
+        </section>
+
+        <!-- RIGHT: Sidebar -->
+        <section id="sidebar">
+            <div id="events-panel">
+                <h3>Active Events</h3>
+                <div id="events-list"></div>
+            </div>
+            <div id="leaderboard-panel">
+                <h3>Leaderboard</h3>
+                <div id="leaderboard"></div>
+            </div>
+            <div id="trade-feed-panel">
+                <h3>Trade Feed</h3>
+                <div id="trade-feed"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FINAL RESULTS OVERLAY -->
+    <div id="results-overlay" class="hidden">
+        <div id="results-content">
+            <h1>FINAL BATTLE RESULTS</h1>
+            <div id="results-scroll">
+                <div id="champion-box"></div>
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Bot</th>
+                            <th class="num">Net Worth</th>
+                            <th class="num">P&L</th>
+                            <th class="num">Trades</th>
+                            <th class="num">Taunts</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody"></tbody>
+                </table>
+                <div id="awards-box"></div>
+                <div id="final-market"></div>
+            </div>
+            <button onclick="startGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script src="/static/js/game.js"></script>
+</body>
+</html>
