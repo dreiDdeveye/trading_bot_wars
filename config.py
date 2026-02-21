@@ -3,7 +3,7 @@
 TOTAL_ROUNDS = 100
 STARTING_CASH = 1_000.0
 WIN_TARGET = 10_000.0
-TICKS_PER_ROUND = 15          # sub-ticks per round (~4s each = ~60s per round)
+TICKS_PER_ROUND = 30          # sub-ticks per round (~4s each = ~120s per round)
 
 # ─── ASSET TEMPLATES ─────────────────────────────────────────
 ASSETS_TEMPLATE = [

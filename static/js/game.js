@@ -120,7 +120,11 @@ async function doTick() {
         if (gameState.game_over) {
             clearInterval(tickInterval);
             tickInterval = null;
-            setTimeout(() => showFinalResults(gameState), 1500);
+            setTimeout(() => {
+                showFinalResults(gameState);
+                // Auto-restart after 10 seconds to keep it running 24/7
+                setTimeout(() => startGame(), 10000);
+            }, 1500);
         }
     } catch (e) {
         // Network error — skip this tick

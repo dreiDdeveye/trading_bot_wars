@@ -193,6 +193,31 @@ body {
     content: " copied!";
 }
 
+/* ─── LIVE INDICATOR ───────────────────────────────────── */
+#live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--red);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: livePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 4px var(--red); }
+    50% { opacity: 0.4; box-shadow: 0 0 8px var(--red); }
+}
+
 /* ─── CONTROLS ─────────────────────────────────────────── */
 #controls {
     display: flex;
