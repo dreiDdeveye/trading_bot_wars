@@ -3,7 +3,6 @@
 let gameState = null;
 let tickInterval = null;
 let charts = {};
-let isPaused = false;
 let previousPrices = {};
 let botIconMap = {};
 
@@ -76,9 +75,6 @@ async function startGame() {
     document.getElementById("results-overlay").classList.add("hidden");
     document.getElementById("breaking-news").classList.add("hidden");
     document.getElementById("trade-feed").innerHTML = "";
-    isPaused = false;
-    document.getElementById("btn-pause").textContent = "Pause";
-
     if (tickInterval) clearInterval(tickInterval);
 
     try {
@@ -109,7 +105,6 @@ function startTicking() {
 }
 
 async function doTick() {
-    if (isPaused) return;
     try {
         const resp = await fetch("/api/tick", { method: "POST" });
         if (!resp.ok) return;
@@ -129,11 +124,6 @@ async function doTick() {
     } catch (e) {
         // Network error — skip this tick
     }
-}
-
-function togglePause() {
-    isPaused = !isPaused;
-    document.getElementById("btn-pause").textContent = isPaused ? "Resume" : "Pause";
 }
 
 function closeResults() {
