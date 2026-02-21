@@ -81,20 +81,27 @@ async function startGame() {
 
     if (tickInterval) clearInterval(tickInterval);
 
-    await fetch("/api/new_game", { method: "POST" });
+    try {
+        await fetch("/api/new_game", { method: "POST" });
 
-    const resp = await fetch("/api/tick", { method: "POST" });
-    gameState = await resp.json();
+        const resp = await fetch("/api/tick", { method: "POST" });
+        if (!resp.ok) return;
+        gameState = await resp.json();
+        if (!gameState || gameState.error) return;
 
-    // Build icon map from bots
-    botIconMap = {};
-    gameState.bots.forEach(bot => {
-        botIconMap[bot.name] = bot.personality;
-    });
+        // Build icon map from bots
+        botIconMap = {};
+        gameState.bots.forEach(bot => {
+            botIconMap[bot.name] = bot.personality;
+        });
 
-    initCharts(gameState);
-    updateAll(gameState);
-    startTicking();
+        initCharts(gameState);
+        updateAll(gameState);
+        startTicking();
+    } catch (e) {
+        // Retry after a short delay
+        setTimeout(startGame, 2000);
+    }
 }
 
 function startTicking() {
@@ -103,14 +110,20 @@ function startTicking() {
 
 async function doTick() {
     if (isPaused) return;
-    const resp = await fetch("/api/tick", { method: "POST" });
-    gameState = await resp.json();
-    updateAll(gameState);
+    try {
+        const resp = await fetch("/api/tick", { method: "POST" });
+        if (!resp.ok) return;
+        gameState = await resp.json();
+        if (!gameState || gameState.error) return;
+        updateAll(gameState);
 
-    if (gameState.game_over) {
-        clearInterval(tickInterval);
-        tickInterval = null;
-        setTimeout(() => showFinalResults(gameState), 1500);
+        if (gameState.game_over) {
+            clearInterval(tickInterval);
+            tickInterval = null;
+            setTimeout(() => showFinalResults(gameState), 1500);
+        }
+    } catch (e) {
+        // Network error — skip this tick
     }
 }
 

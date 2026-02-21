@@ -4,7 +4,7 @@ from flask import Flask, jsonify, render_template
 from engine import GameEngine
 
 app = Flask(__name__)
-game_engine = None
+game_engine = GameEngine()
 
 
 @app.route("/")
@@ -23,7 +23,7 @@ def new_game():
 def tick():
     global game_engine
     if game_engine is None:
-        return jsonify({"error": "No game in progress. Call /api/new_game first."}), 400
+        game_engine = GameEngine()
     state = game_engine.tick()
     return jsonify(state)
 
