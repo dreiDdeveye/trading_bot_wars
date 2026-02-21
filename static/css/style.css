@@ -61,6 +61,22 @@ body {
 .icon-purple { color: var(--purple); }
 .icon-orange { color: var(--orange); }
 
+/* ─── BOT AVATARS ─────────────────────────────────────── */
+.bot-avatar {
+    display: inline-block;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.avatar-hero { width: 40px; height: 40px; }
+.avatar-roster { width: 32px; height: 32px; }
+.avatar-lb { width: 20px; height: 20px; }
+.avatar-feed { width: 14px; height: 14px; }
+.avatar-sm { width: 16px; height: 16px; }
+.avatar-champ { width: 48px; height: 48px; border: 2px solid var(--gold); }
+
 /* ─── BANNER ───────────────────────────────────────────── */
 #banner {
     text-align: center;
@@ -126,6 +142,10 @@ body {
     width: 22px;
     height: 22px;
     color: var(--text-dim);
+}
+
+.hero-bot .bot-avatar {
+    margin-bottom: 2px;
 }
 
 .hero-bot span {

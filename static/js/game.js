@@ -22,6 +22,25 @@ const BOT_ICONS = {
     diamond_hands: 'gem',
 };
 
+const BOT_AVATARS = {
+    aggressive: '/static/img/hyperclaw-ai.png',
+    cautious: '/static/img/clawcore.webp',
+    momentum: '/static/img/claw-labs.png',
+    contrarian: '/static/img/apex.png',
+    degen: '/static/img/neuroclaw.jpg',
+    sniper: '/static/img/neural-claw.png',
+    whale: '/static/img/cyberlobster.png',
+    saboteur: '/static/img/apex.png',
+    scalper: '/static/img/metaclaw.jpg',
+    diamond_hands: '/static/img/clawops.png',
+};
+
+function botAvatar(personality, cls = 'avatar-sm') {
+    const src = BOT_AVATARS[personality] || '';
+    if (!src) return icon(BOT_ICONS[personality] || 'circle', cls);
+    return `<img src="${src}" class="bot-avatar ${cls}" alt="">`;
+}
+
 function icon(name, cls = '') {
     return `<i data-lucide="${name}" class="${cls}"></i>`;
 }
@@ -146,11 +165,11 @@ function renderRoster(bots) {
     grid.innerHTML = "";
     botIconMap = {};
     bots.forEach(bot => {
-        botIconMap[bot.name] = BOT_ICONS[bot.personality] || 'circle';
+        botIconMap[bot.name] = bot.personality;
         const card = document.createElement("div");
         card.className = "roster-card";
         card.innerHTML = `
-            <span class="roster-icon">${icon(botIconMap[bot.name], 'icon-roster')}</span>
+            <span class="roster-icon">${botAvatar(bot.personality, 'avatar-roster')}</span>
             <div class="roster-info">
                 <h4 style="color:${bot.color}">${bot.name}</h4>
                 <p>"${bot.motto}"</p>
@@ -321,11 +340,10 @@ function updateLeaderboard(state) {
         const barPct = Math.max(5, ((bot.net_worth - minNW) / range) * 100);
         const barClass = bot.pnl >= 0 ? "" : "negative";
         const rankIcon = RANK_ICONS[i] || (i + 1).toString();
-        const botLucideIcon = BOT_ICONS[bot.personality] || 'circle';
 
         row.innerHTML = `
             <span class="lb-rank">${rankIcon}</span>
-            <span class="lb-icon">${icon(botLucideIcon)}</span>
+            <span class="lb-icon">${botAvatar(bot.personality, 'avatar-lb')}</span>
             <span class="lb-name" style="color:${bot.color}">${bot.name}</span>
             <span class="lb-nw">$${formatNum(bot.net_worth)}</span>
             <span class="lb-pnl ${pnlClass}">${bot.pnl >= 0 ? "+" : ""}$${formatNum(bot.pnl)}</span>
@@ -351,10 +369,10 @@ function updateTradeFeed(state) {
             actionText = `${action.action} ${action.amount} ${action.asset} @ $${formatNum(action.price)}`;
         }
 
-        const botLucideIcon = botIconMap[action.bot_name] || 'circle';
+        const botPersonality = botIconMap[action.bot_name] || '';
         entry.innerHTML = `
             <span>${actionIcon}</span>
-            <span class="feed-bot" style="color:${action.bot_color}">${icon(botLucideIcon, 'icon-feed')} ${action.bot_name}</span>
+            <span class="feed-bot" style="color:${action.bot_color}">${botAvatar(botPersonality, 'avatar-feed')} ${action.bot_name}</span>
             <span class="feed-action">${actionText}</span>
             <span class="feed-comment">${action.commentary}</span>
         `;
@@ -375,7 +393,7 @@ function showFinalResults(state) {
     overlay.classList.remove("hidden");
 
     const aw = state.awards;
-    const champIcon = botIconMap[aw.champion.name] || 'crown';
+    const champPersonality = botIconMap[aw.champion.name] || '';
 
     // Title based on win condition
     const titleEl = overlay.querySelector('h1');
@@ -387,7 +405,7 @@ function showFinalResults(state) {
 
     const champBox = document.getElementById("champion-box");
     champBox.innerHTML = `
-        <div class="champ-icon">${icon(champIcon, 'icon-champ')}</div>
+        <div class="champ-icon">${botAvatar(champPersonality, 'avatar-champ')}</div>
         <div class="champ-name" style="color:${aw.champion.color}">${aw.champion.name}</div>
         <div class="champ-stats">
             Net Worth: $${formatNum(aw.champion.net_worth)} |
@@ -402,10 +420,9 @@ function showFinalResults(state) {
     state.bots.forEach((bot, i) => {
         const tr = document.createElement("tr");
         const pnlClass = bot.pnl >= 0 ? "price-up" : "price-down";
-        const botLucideIcon = BOT_ICONS[bot.personality] || 'circle';
         tr.innerHTML = `
             <td>${i + 1}</td>
-            <td><span style="color:${bot.color}">${icon(botLucideIcon, 'icon-sm')} ${bot.name}</span></td>
+            <td><span style="color:${bot.color}">${botAvatar(bot.personality, 'avatar-sm')} ${bot.name}</span></td>
             <td class="num">$${formatNum(bot.net_worth)}</td>
             <td class="num ${pnlClass}">${bot.pnl >= 0 ? "+" : ""}$${formatNum(bot.pnl)}</td>
             <td class="num">${bot.trades_made}</td>
@@ -417,11 +434,11 @@ function showFinalResults(state) {
     const awardsBox = document.getElementById("awards-box");
     awardsBox.innerHTML = `<h3>${icon('award', 'icon-award-title')} Awards</h3>`;
     const awards = [
-        ["Most Active Trader", `${icon(botIconMap[aw.most_active.name] || 'circle', 'icon-sm')} ${aw.most_active.name} (${aw.most_active.trades} trades)`],
-        ["Biggest Trash Talker", `${icon(botIconMap[aw.trash_talker.name] || 'circle', 'icon-sm')} ${aw.trash_talker.name} (${aw.trash_talker.taunts} taunts)`],
-        ["Best Single Trade", `${icon(botIconMap[aw.best_trade.name] || 'circle', 'icon-sm')} ${aw.best_trade.name} ($${formatNum(aw.best_trade.pnl)})`],
-        ["Worst Single Trade", `${icon(botIconMap[aw.worst_trade.name] || 'circle', 'icon-sm')} ${aw.worst_trade.name} ($${formatNum(aw.worst_trade.pnl)})`],
-        ["Biggest Loser", `${icon(botIconMap[aw.biggest_loser.name] || 'circle', 'icon-sm')} ${aw.biggest_loser.name} ($${formatNum(aw.biggest_loser.pnl)})`],
+        ["Most Active Trader", `${botAvatar(botIconMap[aw.most_active.name] || '', 'avatar-sm')} ${aw.most_active.name} (${aw.most_active.trades} trades)`],
+        ["Biggest Trash Talker", `${botAvatar(botIconMap[aw.trash_talker.name] || '', 'avatar-sm')} ${aw.trash_talker.name} (${aw.trash_talker.taunts} taunts)`],
+        ["Best Single Trade", `${botAvatar(botIconMap[aw.best_trade.name] || '', 'avatar-sm')} ${aw.best_trade.name} ($${formatNum(aw.best_trade.pnl)})`],
+        ["Worst Single Trade", `${botAvatar(botIconMap[aw.worst_trade.name] || '', 'avatar-sm')} ${aw.worst_trade.name} ($${formatNum(aw.worst_trade.pnl)})`],
+        ["Biggest Loser", `${botAvatar(botIconMap[aw.biggest_loser.name] || '', 'avatar-sm')} ${aw.biggest_loser.name} ($${formatNum(aw.biggest_loser.pnl)})`],
     ];
     awards.forEach(([label, value]) => {
         const row = document.createElement("div");
