@@ -117,6 +117,21 @@ function togglePause() {
     document.getElementById("btn-pause").textContent = isPaused ? "Resume" : "Pause";
 }
 
+function goHome() {
+    if (tickInterval) clearInterval(tickInterval);
+    tickInterval = null;
+    isPaused = false;
+    document.getElementById("controls").classList.add("hidden");
+    document.getElementById("game-grid").classList.add("hidden");
+    document.getElementById("combatants-roster").classList.add("hidden");
+    document.getElementById("breaking-news").classList.add("hidden");
+    document.getElementById("results-overlay").classList.add("hidden");
+    document.getElementById("hero").classList.remove("hidden");
+    document.getElementById("btn-pause").textContent = "Pause";
+    document.getElementById("btn-pause").disabled = true;
+    document.getElementById("trade-feed").innerHTML = "";
+}
+
 document.getElementById("speed").addEventListener("input", () => {
     if (tickInterval && !isPaused) {
         clearInterval(tickInterval);
