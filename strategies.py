@@ -59,10 +59,10 @@ def strategy_aggressive(bot, assets, rnd):
 
 def strategy_cautious(bot, assets, rnd):
     actions = []
-    safe = assets.get("SAFE")
+    bnb = assets.get("BNB")
     for sym, asset in assets.items():
         held = bot.holdings.get(sym, 0)
-        if asset.volatility < 0.3 and bot.cash > asset.price * 3:
+        if asset.volatility < 0.5 and bot.cash > asset.price * 3:
             qty = int((bot.cash * 0.1) / asset.price)
             if qty > 0 and random.random() < 0.5:
                 actions.append(TradeAction(bot.name, "BUY", sym, qty, asset.price,
@@ -77,12 +77,12 @@ def strategy_cautious(bot, assets, rnd):
             actions.append(TradeAction(bot.name, "SELL", sym, sell_qty, asset.price,
                 f"Trimming {sym}. Locking in gains responsibly."))
             bot.execute_sell(asset, sell_qty)
-    if safe and bot.cash > safe.price * 5:
-        qty = int((bot.cash * 0.15) / safe.price)
+    if bnb and bot.cash > bnb.price * 5:
+        qty = int((bot.cash * 0.15) / bnb.price)
         if qty > 0 and random.random() < 0.4:
-            actions.append(TradeAction(bot.name, "BUY", "SAFE", qty, safe.price,
-                "Safety first. Always."))
-            bot.execute_buy(safe, qty)
+            actions.append(TradeAction(bot.name, "BUY", "BNB", qty, bnb.price,
+                "BNB is the safe play. Always."))
+            bot.execute_buy(bnb, qty)
     return actions
 
 
@@ -134,26 +134,26 @@ def strategy_contrarian(bot, assets, rnd):
 
 def strategy_degen(bot, assets, rnd):
     actions = []
-    meme = assets.get("MEME")
-    if meme and bot.cash > meme.price * 3 and random.random() < 0.7:
-        qty = int((bot.cash * 0.7) / meme.price)
+    sol = assets.get("SOL")
+    if sol and bot.cash > sol.price * 3 and random.random() < 0.7:
+        qty = int((bot.cash * 0.7) / sol.price)
         if qty > 0:
-            actions.append(TradeAction(bot.name, "BUY", "MEME", qty, meme.price,
+            actions.append(TradeAction(bot.name, "BUY", "SOL", qty, sol.price,
                 random.choice([
-                    "YOLO!!! MEME TO THE MOON!!!",
+                    "YOLO!!! SOL TO THE MOON!!!",
                     "APE IN APE IN APE IN!!!",
-                    "Sir, this is a casino. ALL IN on MEME!",
-                    "DIAMOND HANDS BABY! BUYING MORE MEME!",
-                    "My wife's boyfriend said buy MEME. I'm in.",
+                    "Sir, this is a casino. ALL IN on SOL!",
+                    "DIAMOND HANDS BABY! BUYING MORE SOL!",
+                    "Solana ecosystem is cooking. I'm in.",
                 ])))
-            bot.execute_buy(meme, qty)
+            bot.execute_buy(sol, qty)
     for sym in list(bot.holdings.keys()):
         if random.random() < 0.3:
             held = bot.holdings[sym]
             asset = assets[sym]
             actions.append(TradeAction(bot.name, "SELL", sym, held, asset.price,
                 random.choice([
-                    f"Paper handing {sym} for more MEME money!",
+                    f"Paper handing {sym} for more SOL money!",
                     f"Selling {sym} because I got bored.",
                     f"Need cash for the next YOLO. Dumping {sym}.",
                 ])))

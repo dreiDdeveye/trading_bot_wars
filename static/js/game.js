@@ -62,11 +62,11 @@ const ACTION_ICONS = {
 };
 
 const ASSET_COLORS = {
-    MEME: "#eab308",
-    ALGO: "#3b82f6",
-    SAFE: "#22c55e",
-    BOOM: "#f97316",
-    DARK: "#a855f7",
+    BTC: "#f7931a",
+    ETH: "#627eea",
+    SOL: "#9945ff",
+    BNB: "#f3ba2f",
+    XRP: "#00aae4",
 };
 
 /* ─── GAME LIFECYCLE ─────────────────────────────────── */

@@ -7,30 +7,30 @@ TICKS_PER_ROUND = 30          # sub-ticks per round (~4s each = ~120s per round)
 
 # ─── ASSET TEMPLATES ─────────────────────────────────────────
 ASSETS_TEMPLATE = [
-    {"symbol": "MEME",  "name": "MemeCoin",       "price": 42.00,  "volatility": 0.9,  "trend": 0.1},
-    {"symbol": "ALGO",  "name": "AlgoTech Corp",  "price": 150.00, "volatility": 0.4,  "trend": 0.2},
-    {"symbol": "SAFE",  "name": "SafeHaven Bond", "price": 100.00, "volatility": 0.15, "trend": -0.05},
-    {"symbol": "BOOM",  "name": "BoomEnergy",     "price": 75.00,  "volatility": 0.6,  "trend": 0.0},
-    {"symbol": "DARK",  "name": "DarkPool Ltd",   "price": 200.00, "volatility": 0.5,  "trend": 0.15},
+    {"symbol": "BTC",  "name": "Bitcoin",    "price": 97000.00, "volatility": 0.5,  "trend": 0.15},
+    {"symbol": "ETH",  "name": "Ethereum",   "price": 2700.00,  "volatility": 0.55, "trend": 0.1},
+    {"symbol": "SOL",  "name": "Solana",     "price": 175.00,   "volatility": 0.7,  "trend": 0.2},
+    {"symbol": "BNB",  "name": "BNB",        "price": 650.00,   "volatility": 0.4,  "trend": 0.05},
+    {"symbol": "XRP",  "name": "XRP",        "price": 2.50,     "volatility": 0.65, "trend": 0.0},
 ]
 
 # ─── MARKET EVENTS ───────────────────────────────────────────
 EVENT_POOL = [
-    {"name": "REGULATORY CRACKDOWN", "description": "Govt bans fun. Markets panic.", "target_asset": "ALL", "price_impact": -0.04, "duration": 2},
-    {"name": "MEME VIRUS", "description": "MemeCoin goes viral on social media!", "target_asset": "MEME", "price_impact": 0.12, "duration": 1},
-    {"name": "ALGO BREAKTHROUGH", "description": "AlgoTech announces quantum AI chip!", "target_asset": "ALGO", "price_impact": 0.08, "duration": 2},
-    {"name": "ENERGY CRISIS", "description": "BoomEnergy reactor goes offline!", "target_asset": "BOOM", "price_impact": -0.10, "duration": 2},
-    {"name": "DARK POOL LEAK", "description": "DarkPool's secret trades exposed!", "target_asset": "DARK", "price_impact": -0.07, "duration": 1},
+    {"name": "REGULATORY CRACKDOWN", "description": "SEC announces new crypto regulations.", "target_asset": "ALL", "price_impact": -0.04, "duration": 2},
+    {"name": "BTC ETF INFLOWS", "description": "Record inflows into Bitcoin spot ETFs!", "target_asset": "BTC", "price_impact": 0.08, "duration": 2},
+    {"name": "ETH UPGRADE", "description": "Ethereum completes major network upgrade!", "target_asset": "ETH", "price_impact": 0.07, "duration": 2},
+    {"name": "SOL NFT BOOM", "description": "Solana NFT volume explodes overnight!", "target_asset": "SOL", "price_impact": 0.10, "duration": 1},
+    {"name": "BNB BURN EVENT", "description": "Binance burns massive BNB supply!", "target_asset": "BNB", "price_impact": 0.06, "duration": 2},
+    {"name": "XRP LAWSUIT WIN", "description": "Ripple scores major legal victory!", "target_asset": "XRP", "price_impact": 0.12, "duration": 1},
     {"name": "BULL STAMPEDE", "description": "Investors go full FOMO!", "target_asset": "ALL", "price_impact": 0.05, "duration": 1},
-    {"name": "FLASH CRASH", "description": "Algorithms trigger cascade selling!", "target_asset": "ALL", "price_impact": -0.08, "duration": 1},
-    {"name": "SAFE HAVEN RUSH", "description": "Everyone flees to safety!", "target_asset": "SAFE", "price_impact": 0.06, "duration": 2},
-    {"name": "WHALE ALERT", "description": "Mysterious whale enters the market!", "target_asset": "MEME", "price_impact": 0.15, "duration": 1},
-    {"name": "EARNINGS BEAT", "description": "AlgoTech smashes expectations!", "target_asset": "ALGO", "price_impact": 0.06, "duration": 1},
-    {"name": "SHORT SQUEEZE", "description": "Shorts get obliterated on DarkPool!", "target_asset": "DARK", "price_impact": 0.12, "duration": 1},
-    {"name": "FED RATE HIKE", "description": "Interest rates go brrrr UP!", "target_asset": "ALL", "price_impact": -0.03, "duration": 3},
+    {"name": "FLASH CRASH", "description": "Liquidation cascade triggers massive selloff!", "target_asset": "ALL", "price_impact": -0.08, "duration": 1},
+    {"name": "WHALE ALERT", "description": "Whale moves 10,000 BTC to exchange!", "target_asset": "BTC", "price_impact": -0.06, "duration": 1},
+    {"name": "ETH GAS SPIKE", "description": "Ethereum gas fees hit all-time highs!", "target_asset": "ETH", "price_impact": -0.05, "duration": 1},
+    {"name": "SOL OUTAGE", "description": "Solana network experiences downtime!", "target_asset": "SOL", "price_impact": -0.10, "duration": 1},
+    {"name": "FED RATE HIKE", "description": "Interest rates go up. Risk-off mode.", "target_asset": "ALL", "price_impact": -0.03, "duration": 3},
     {"name": "STIMULUS CHECK", "description": "Money printer goes brrrr!", "target_asset": "ALL", "price_impact": 0.04, "duration": 2},
-    {"name": "RUG PULL SCARE", "description": "MemeCoin dev wallet moves tokens!", "target_asset": "MEME", "price_impact": -0.15, "duration": 1},
-    {"name": "TAKEOVER BID", "description": "Hostile takeover attempt on BoomEnergy!", "target_asset": "BOOM", "price_impact": 0.10, "duration": 1},
+    {"name": "SHORT SQUEEZE", "description": "Massive short liquidations across the market!", "target_asset": "ALL", "price_impact": 0.06, "duration": 1},
+    {"name": "HACK SCARE", "description": "Major exchange reports security breach!", "target_asset": "ALL", "price_impact": -0.07, "duration": 1},
 ]
 
 # ─── BOT PROFILES ────────────────────────────────────────────
