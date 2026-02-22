@@ -36,6 +36,11 @@
                 <img src="/static/img/clawtopia.png" alt="Clawtopia" class="nav-logo-img">
             </div>
             <div class="nav-links">
+                <div id="ca-box" onclick="copyCA()">
+                    <span class="ca-label">CA:</span>
+                    <span class="ca-address" id="ca-text">TBA</span>
+                    <i data-lucide="copy" class="ca-copy-icon"></i>
+                </div>
                 <a href="https://x.com/ClawtopiaSolana" target="_blank" rel="noopener" class="nav-link" title="Twitter / X">
                     <i data-lucide="twitter"></i>
                     <span>Twitter</span>
@@ -64,11 +69,6 @@
             <button id="back-home-btn" onclick="goHome()" title="Back to Home">
                 <i data-lucide="arrow-left"></i>
             </button>
-            <div id="ca-box" onclick="copyCA()">
-                <span class="ca-label">CA:</span>
-                <span class="ca-address" id="ca-text">TBA</span>
-                <i data-lucide="copy" class="ca-copy-icon"></i>
-            </div>
         </div>
         <div id="bar-status">
             <span id="live-indicator"><span class="live-dot"></span>LIVE</span>
