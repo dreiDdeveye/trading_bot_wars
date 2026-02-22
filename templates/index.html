@@ -6,34 +6,52 @@
     <title>Clawtopia</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-    <!-- BANNER -->
-    <header id="banner">
-        <img src="/static/img/clawtopia.png" alt="CLAWTOPIA" class="banner-logo">
-    </header>
-
-    <!-- CA & SOCIAL (always visible in banner area) -->
-    <div id="banner-extras">
-        <div id="ca-box" onclick="copyCA()">
-            <span class="ca-label">CA:</span>
-            <span class="ca-address" id="ca-text">TBA</span>
-            <i data-lucide="copy" class="ca-copy-icon"></i>
-        </div>
-        <div id="social-links">
-            <a href="https://x.com/ClawtopiaSolana?fbclid=IwY2xjawQHH31leHRuA2FlbQIxMABicmlkETJhZW1mSUxsdlZROGk3Z2NYc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHlthmP9ekx0Jgr_KFs8HBlxIbTuH13QYIIstqxJQw2c6b_87FgvtEKabhahX_aem_uzVZrZ3v_QhteDTVgjEzWw" class="social-link" title="Twitter / X"><i data-lucide="twitter"></i></a>
-        </div>
+    <!-- CENTERED BANNER -->
+    <div id="banner">
+        <img src="/static/img/clawtopia.png" alt="CLAWTOPIA" class="banner-img">
     </div>
 
-    <!-- CONTROLS -->
-    <div id="controls">
-        <span id="live-indicator"><span class="live-dot"></span>LIVE</span>
-        <span id="round-display">Round 0 / 100</span>
-        <span id="mood-display">Market: NEUTRAL</span>
+    <!-- TOP BAR -->
+    <header id="top-bar">
+        <div class="bar-left">
+            <div id="ca-box" onclick="copyCA()">
+                <span class="ca-label">CA:</span>
+                <span class="ca-address" id="ca-text">TBA</span>
+                <i data-lucide="copy" class="ca-copy-icon"></i>
+            </div>
+        </div>
+        <div id="bar-status">
+            <span id="live-indicator"><span class="live-dot"></span>LIVE</span>
+            <span class="bar-divider"></span>
+            <span id="round-display">Round 0 / 100</span>
+            <span class="bar-divider"></span>
+            <span id="mood-display">Market: NEUTRAL</span>
+        </div>
+        <div class="bar-right">
+            <div id="social-links">
+                <a href="https://x.com/ClawtopiaSolana?fbclid=IwY2xjawQHH31leHRuA2FlbQIxMABicmlkETJhZW1mSUxsdlZROGk3Z2NYc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHlthmP9ekx0Jgr_KFs8HBlxIbTuH13QYIIstqxJQw2c6b_87FgvtEKabhahX_aem_uzVZrZ3v_QhteDTVgjEzWw" class="social-link" title="Twitter / X"><i data-lucide="twitter"></i></a>
+            </div>
+        </div>
+    </header>
+    <div class="glow-line"></div>
+
+    <!-- ASSET NAMES STRIP -->
+    <div id="asset-strip">
+        <span class="asset-tag" style="--tag-color: #f3ba2f">BNB</span>
+        <span class="asset-dot"></span>
+        <span class="asset-tag" style="--tag-color: #9945ff">SOL</span>
+        <span class="asset-dot"></span>
+        <span class="asset-tag" style="--tag-color: #627eea">ETH</span>
+        <span class="asset-dot"></span>
+        <span class="asset-tag" style="--tag-color: #00aae4">XRP</span>
+        <span class="asset-dot"></span>
+        <span class="asset-tag" style="--tag-color: #f7931a">BTC</span>
     </div>
 
     <!-- BREAKING NEWS BANNER -->
@@ -48,16 +66,25 @@
 
         <!-- RIGHT: Sidebar -->
         <section id="sidebar">
-            <div id="events-panel">
-                <h3>Active Events</h3>
+            <div id="events-panel" class="panel-card">
+                <div class="panel-header">
+                    <i data-lucide="radio" class="panel-icon"></i>
+                    <h3>Active Events</h3>
+                </div>
                 <div id="events-list"></div>
             </div>
-            <div id="leaderboard-panel">
-                <h3>Leaderboard</h3>
+            <div id="leaderboard-panel" class="panel-card">
+                <div class="panel-header">
+                    <i data-lucide="bar-chart-3" class="panel-icon"></i>
+                    <h3>Leaderboard</h3>
+                </div>
                 <div id="leaderboard"></div>
             </div>
-            <div id="trade-feed-panel">
-                <h3>Trade Feed</h3>
+            <div id="trade-feed-panel" class="panel-card">
+                <div class="panel-header">
+                    <i data-lucide="activity" class="panel-icon"></i>
+                    <h3>Trade Feed</h3>
+                </div>
                 <div id="trade-feed"></div>
             </div>
         </section>
@@ -67,7 +94,8 @@
     <div id="results-overlay" class="hidden">
         <div id="results-content">
             <button id="results-close" onclick="closeResults()">&times;</button>
-            <h1>FINAL BATTLE RESULTS</h1>
+            <div class="results-badge">SESSION COMPLETE</div>
+            <h1>FINAL RESULTS</h1>
             <div id="results-scroll">
                 <div id="champion-box"></div>
                 <table id="results-table">

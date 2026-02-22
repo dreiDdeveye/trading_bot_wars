@@ -2,6 +2,7 @@
 
 from flask import Flask, jsonify, render_template
 from engine import GameEngine
+from prices import fetch_prices
 
 app = Flask(__name__)
 game_engine = GameEngine()
@@ -26,6 +27,13 @@ def tick():
         game_engine = GameEngine()
     state = game_engine.tick()
     return jsonify(state)
+
+
+@app.route("/api/prices")
+def live_prices():
+    """Return real-time prices from CoinGecko (cached 5s)."""
+    prices = fetch_prices()
+    return jsonify(prices)
 
 
 if __name__ == "__main__":

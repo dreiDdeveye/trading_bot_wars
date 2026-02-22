@@ -3,17 +3,20 @@
 import random
 from config import TOTAL_ROUNDS, STARTING_CASH, ASSETS_TEMPLATE, EVENT_POOL, BOT_PROFILES, WIN_TARGET, TICKS_PER_ROUND
 from models import Asset, MarketEvent, TradeAction, BotPersonality, Bot
+from prices import fetch_prices
 import strategies
 
 
 class GameEngine:
     def __init__(self):
+        live_prices = fetch_prices()
         self.assets = {}
         for tmpl in ASSETS_TEMPLATE:
-            self.assets[tmpl["symbol"]] = Asset(
-                symbol=tmpl["symbol"],
+            sym = tmpl["symbol"]
+            self.assets[sym] = Asset(
+                symbol=sym,
                 name=tmpl["name"],
-                price=tmpl["price"],
+                price=live_prices.get(sym, tmpl["price"]),
                 volatility=tmpl["volatility"],
                 trend=tmpl["trend"],
                 history=[],
@@ -45,8 +48,11 @@ class GameEngine:
         else:
             self.new_event = None
 
-        # Always: update asset prices (scaled for sub-tick)
-        for asset in self.assets.values():
+        # Sync real prices from CoinGecko then apply simulation noise
+        live = fetch_prices()
+        for sym, asset in self.assets.items():
+            if sym in live:
+                asset.price = live[sym]
             asset.tick(self.market_mood, self.active_events, TICKS_PER_ROUND)
 
         # Always: pick 2-3 random traders to act this sub-tick

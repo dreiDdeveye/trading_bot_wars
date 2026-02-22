@@ -1,4 +1,6 @@
-/* ─── Trading Bot Wars — Frontend Controller ────────── */
+/* ═══════════════════════════════════════════════════════════
+   CLAWTOPIA — Frontend Controller
+   ═══════════════════════════════════════════════════════════ */
 
 let gameState = null;
 let tickInterval = null;
@@ -6,7 +8,7 @@ let charts = {};
 let previousPrices = {};
 let botIconMap = {};
 
-/* ─── ICON SYSTEM ────────────────────────────────────── */
+/* ─── ICON SYSTEM ────────────────────────────────────────── */
 
 const BOT_ICONS = {
     aggressive: 'swords',
@@ -69,7 +71,7 @@ const ASSET_COLORS = {
     XRP: "#00aae4",
 };
 
-/* ─── GAME LIFECYCLE ─────────────────────────────────── */
+/* ─── GAME LIFECYCLE ─────────────────────────────────────── */
 
 async function startGame() {
     document.getElementById("results-overlay").classList.add("hidden");
@@ -85,7 +87,6 @@ async function startGame() {
         gameState = await resp.json();
         if (!gameState || gameState.error) return;
 
-        // Build icon map from bots
         botIconMap = {};
         gameState.bots.forEach(bot => {
             botIconMap[bot.name] = bot.personality;
@@ -95,7 +96,6 @@ async function startGame() {
         updateAll(gameState);
         startTicking();
     } catch (e) {
-        // Retry after a short delay
         setTimeout(startGame, 2000);
     }
 }
@@ -117,7 +117,6 @@ async function doTick() {
             tickInterval = null;
             setTimeout(() => {
                 showFinalResults(gameState);
-                // Auto-restart after 10 seconds to keep it running 24/7
                 setTimeout(() => startGame(), 10000);
             }, 1500);
         }
@@ -130,35 +129,69 @@ function closeResults() {
     document.getElementById("results-overlay").classList.add("hidden");
 }
 
+/* ─── CHARTS ─────────────────────────────────────────────── */
 
-/* ─── CHARTS ─────────────────────────────────────────── */
+function createGradient(ctx, color, height) {
+    const gradient = ctx.createLinearGradient(0, 0, 0, height || 160);
+    gradient.addColorStop(0, color + "25");
+    gradient.addColorStop(0.7, color + "08");
+    gradient.addColorStop(1, color + "00");
+    return gradient;
+}
 
 function initCharts(state) {
     const container = document.getElementById("charts-container");
     container.innerHTML = "";
     charts = {};
+    previousPrices = {};
 
-    Object.keys(state.assets).forEach(sym => {
+    const symbols = Object.keys(state.assets);
+
+    symbols.forEach((sym, idx) => {
+        const asset = state.assets[sym];
         const card = document.createElement("div");
         card.className = "chart-card";
-        card.innerHTML = `<h4>${sym} — ${state.assets[sym].name}</h4>`;
+        card.id = `card-${sym}`;
+
+        // Last chart stretches full width if odd count
+        if (symbols.length % 2 !== 0 && idx === symbols.length - 1) {
+            card.classList.add("chart-full");
+        }
+
+        const color = ASSET_COLORS[sym] || "#448aff";
+        const priceClass = (asset.change_pct || 0) >= 0 ? "price-up" : "price-down";
+
+        card.innerHTML = `
+            <div class="chart-header">
+                <div class="chart-header-left">
+                    <span class="chart-sym" style="color:${color}">${sym}</span>
+                    <span class="chart-name">${asset.name}</span>
+                </div>
+                <span class="chart-price ${priceClass}" id="price-${sym}">$${formatNum(asset.price)}</span>
+            </div>
+        `;
+
         const canvas = document.createElement("canvas");
         canvas.id = `chart-${sym}`;
         card.appendChild(canvas);
         container.appendChild(card);
 
+        previousPrices[sym] = asset.price;
+
         const ctx = canvas.getContext("2d");
+        const chartHeight = card.classList.contains('chart-full') ? 140 : 160;
         charts[sym] = new Chart(ctx, {
             type: "line",
             data: {
-                labels: state.assets[sym].history.map((_, i) => i),
+                labels: asset.history.map((_, i) => i),
                 datasets: [{
-                    data: state.assets[sym].history,
-                    borderColor: ASSET_COLORS[sym] || "#3b82f6",
-                    backgroundColor: "transparent",
-                    borderWidth: 2,
+                    data: asset.history,
+                    borderColor: color,
+                    backgroundColor: createGradient(ctx, color, chartHeight),
+                    borderWidth: 1.5,
                     pointRadius: 0,
-                    tension: 0.3,
+                    tension: 0.35,
+                    fill: true,
                 }],
             },
             options: {
@@ -170,8 +203,14 @@ function initCharts(state) {
                     x: { display: false },
                     y: {
                         display: true,
-                        grid: { color: "rgba(255,255,255,0.05)" },
-                        ticks: { color: "#64748b", font: { size: 10 }, maxTicksLimit: 4 },
+                        grid: { color: "rgba(34, 46, 68, 0.25)", drawBorder: false },
+                        border: { display: false },
+                        ticks: {
+                            color: "#3a4a60",
+                            font: { size: 9, family: "'JetBrains Mono', monospace" },
+                            maxTicksLimit: 4,
+                            padding: 6,
+                        },
                     },
                 },
             },
@@ -183,14 +222,24 @@ function updateCharts(state) {
     Object.keys(state.assets).forEach(sym => {
         const chart = charts[sym];
         if (!chart) return;
-        const history = state.assets[sym].history;
+        const asset = state.assets[sym];
+        const history = asset.history;
         chart.data.labels = history.map((_, i) => i);
         chart.data.datasets[0].data = history;
         chart.update("none");
+
+        // Update live price
+        const priceEl = document.getElementById(`price-${sym}`);
+        if (priceEl) {
+            priceEl.textContent = `$${formatNum(asset.price)}`;
+            const prev = previousPrices[sym] || asset.price;
+            priceEl.className = `chart-price ${asset.price >= prev ? "price-up" : "price-down"}`;
+            previousPrices[sym] = asset.price;
+        }
     });
 }
 
-/* ─── UPDATE ALL ─────────────────────────────────────── */
+/* ─── UPDATE ALL ─────────────────────────────────────────── */
 
 function updateAll(state) {
     updateRoundDisplay(state);
@@ -202,19 +251,19 @@ function updateAll(state) {
     refreshIcons();
 }
 
-/* ─── ROUND & MOOD ───────────────────────────────────── */
+/* ─── ROUND & MOOD ───────────────────────────────────────── */
 
 function updateRoundDisplay(state) {
     document.getElementById("round-display").textContent =
-        `Round ${state.round} / ${state.total_rounds}`;
+        `R${state.round}/${state.total_rounds}`;
 
     const moodEl = document.getElementById("mood-display");
-    moodEl.textContent = `Market: ${state.market_mood_label}`;
+    moodEl.textContent = `${state.market_mood_label}`;
     moodEl.className = "";
     moodEl.classList.add(state.market_mood_label.toLowerCase());
 }
 
-/* ─── EVENTS ─────────────────────────────────────────── */
+/* ─── EVENTS ─────────────────────────────────────────────── */
 
 function updateEvents(state) {
     const list = document.getElementById("events-list");
@@ -225,7 +274,7 @@ function updateEvents(state) {
         card.innerHTML = `
             <div class="event-name">${ev.name}</div>
             <div class="event-desc">${ev.description}</div>
-            <div class="event-meta">Target: ${ev.target_asset} | ${ev.remaining}r remaining</div>
+            <div class="event-meta">${ev.target_asset} &middot; ${ev.remaining}r left</div>
         `;
         list.appendChild(card);
     });
@@ -247,7 +296,7 @@ function updateBreakingNews(state) {
     }
 }
 
-/* ─── LEADERBOARD ────────────────────────────────────── */
+/* ─── LEADERBOARD ────────────────────────────────────────── */
 
 function updateLeaderboard(state) {
     const container = document.getElementById("leaderboard");
@@ -277,7 +326,7 @@ function updateLeaderboard(state) {
     });
 }
 
-/* ─── TRADE FEED ─────────────────────────────────────── */
+/* ─── TRADE FEED ─────────────────────────────────────────── */
 
 function updateTradeFeed(state) {
     const feed = document.getElementById("trade-feed");
@@ -310,7 +359,7 @@ function updateTradeFeed(state) {
     }
 }
 
-/* ─── FINAL RESULTS ──────────────────────────────────── */
+/* ─── FINAL RESULTS ──────────────────────────────────────── */
 
 function showFinalResults(state) {
     const overlay = document.getElementById("results-overlay");
@@ -319,7 +368,6 @@ function showFinalResults(state) {
     const aw = state.awards;
     const champPersonality = botIconMap[aw.champion.name] || '';
 
-    // Title based on win condition
     const titleEl = overlay.querySelector('h1');
     if (state.win_reason === 'target_reached') {
         titleEl.textContent = `${aw.champion.name} HIT $10,000`;
@@ -346,7 +394,7 @@ function showFinalResults(state) {
         const pnlClass = bot.pnl >= 0 ? "price-up" : "price-down";
         tr.innerHTML = `
             <td>${i + 1}</td>
-            <td><span style="color:${bot.color}">${botAvatar(bot.personality, 'avatar-sm')} ${bot.name}</span></td>
+            <td><span style="color:#ffffff">${botAvatar(bot.personality, 'avatar-sm')} ${bot.name}</span></td>
             <td class="num">$${formatNum(bot.net_worth)}</td>
             <td class="num ${pnlClass}">${bot.pnl >= 0 ? "+" : ""}$${formatNum(bot.pnl)}</td>
             <td class="num">${bot.trades_made}</td>
@@ -391,7 +439,7 @@ function showFinalResults(state) {
     refreshIcons();
 }
 
-/* ─── HELPERS ────────────────────────────────────────── */
+/* ─── HELPERS ────────────────────────────────────────────── */
 
 function formatNum(n) {
     return Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -406,8 +454,39 @@ function copyCA() {
     });
 }
 
-// Auto-start game on page load
+/* ─── REAL-TIME PRICE POLLING ────────────────────────────── */
+
+let priceInterval = null;
+
+async function pollPrices() {
+    try {
+        const resp = await fetch("/api/prices");
+        if (!resp.ok) return;
+        const prices = await resp.json();
+
+        Object.keys(prices).forEach(sym => {
+            const priceEl = document.getElementById(`price-${sym}`);
+            if (priceEl) {
+                const newPrice = prices[sym];
+                const prev = previousPrices[sym] || newPrice;
+                priceEl.textContent = `$${formatNum(newPrice)}`;
+                priceEl.className = `chart-price ${newPrice >= prev ? "price-up" : "price-down"}`;
+                previousPrices[sym] = newPrice;
+            }
+        });
+    } catch (e) {
+        // skip
+    }
+}
+
+function startPricePolling() {
+    if (priceInterval) clearInterval(priceInterval);
+    priceInterval = setInterval(pollPrices, 3000);
+}
+
+// Auto-start
 document.addEventListener("DOMContentLoaded", () => {
     refreshIcons();
     startGame();
+    startPricePolling();
 });
