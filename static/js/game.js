@@ -71,6 +71,14 @@ const ASSET_COLORS = {
     XRP: "#00aae4",
 };
 
+const COIN_ICONS = {
+    BTC: "https://assets.coingecko.com/coins/images/1/small/bitcoin.png",
+    ETH: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
+    SOL: "https://assets.coingecko.com/coins/images/4128/small/solana.png",
+    BNB: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png",
+    XRP: "https://assets.coingecko.com/coins/images/44/small/xrp-symbol-white-128.png",
+};
+
 /* ─── GAME LIFECYCLE ─────────────────────────────────────── */
 
 async function startGame() {
@@ -129,12 +137,44 @@ function closeResults() {
     document.getElementById("results-overlay").classList.add("hidden");
 }
 
-/* ─── CHARTS ─────────────────────────────────────────────── */
+/* ─── CHARTS (CoinGecko style) ──────────────────────────── */
+
+// Crosshair vertical line plugin
+const crosshairPlugin = {
+    id: 'crosshair',
+    afterDraw(chart, args, opts) {
+        if (chart._crosshairX == null) return;
+        const { ctx, chartArea: { top, bottom, left, right } } = chart;
+        const x = chart._crosshairX;
+        if (x < left || x > right) return;
+        ctx.save();
+        /* Vertical crosshair line */
+        ctx.beginPath();
+        ctx.moveTo(x, top);
+        ctx.lineTo(x, bottom);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.setLineDash([3, 3]);
+        ctx.stroke();
+        ctx.restore();
+    }
+};
+Chart.register(crosshairPlugin);
+
+/* CoinGecko colors */
+const CG_GREEN = "#16c784";
+const CG_RED = "#ea3943";
+
+function getChartLineColor(history) {
+    if (history.length < 2) return CG_GREEN;
+    return history[history.length - 1] >= history[0] ? CG_GREEN : CG_RED;
+}
 
 function createGradient(ctx, color, height) {
-    const gradient = ctx.createLinearGradient(0, 0, 0, height || 160);
-    gradient.addColorStop(0, color + "25");
-    gradient.addColorStop(0.7, color + "08");
+    const h = height || 180;
+    const gradient = ctx.createLinearGradient(0, 0, 0, h);
+    gradient.addColorStop(0, color + "28");
+    gradient.addColorStop(0.4, color + "10");
     gradient.addColorStop(1, color + "00");
     return gradient;
 }
@@ -153,21 +193,30 @@ function initCharts(state) {
         card.className = "chart-card";
         card.id = `card-${sym}`;
 
-        // Last chart stretches full width if odd count
         if (symbols.length % 2 !== 0 && idx === symbols.length - 1) {
             card.classList.add("chart-full");
         }
 
-        const color = ASSET_COLORS[sym] || "#448aff";
-        const priceClass = (asset.change_pct || 0) >= 0 ? "price-up" : "price-down";
+        const chg = asset.change_pct || 0;
+        const badgeClass = chg >= 0 ? "up" : "down";
+        const chgSign = chg >= 0 ? "+" : "";
+        const lineColor = getChartLineColor(asset.history);
+        const priceColor = chg >= 0 ? CG_GREEN : CG_RED;
+        const coinIcon = COIN_ICONS[sym] || "";
 
         card.innerHTML = `
             <div class="chart-header">
                 <div class="chart-header-left">
-                    <span class="chart-sym" style="color:${color}">${sym}</span>
-                    <span class="chart-name">${asset.name}</span>
+                    ${coinIcon ? `<img src="${coinIcon}" class="chart-coin-icon" alt="${sym}">` : ''}
+                    <div class="chart-coin-info">
+                        <span class="chart-sym">${asset.name}</span>
+                        <span class="chart-name">${sym}/USD</span>
+                    </div>
                 </div>
-                <span class="chart-price ${priceClass}" id="price-${sym}">$${formatNum(asset.price)}</span>
+                <div class="chart-header-right">
+                    <span class="chart-price" id="price-${sym}" style="color:${priceColor}">$${formatNum(asset.price)}</span>
+                    <span class="chart-badge ${badgeClass}" id="badge-${sym}">${chgSign}${chg.toFixed(2)}%</span>
+                </div>
             </div>
         `;
 
@@ -179,18 +228,23 @@ function initCharts(state) {
         previousPrices[sym] = asset.price;
 
         const ctx = canvas.getContext("2d");
-        const chartHeight = card.classList.contains('chart-full') ? 140 : 160;
-        charts[sym] = new Chart(ctx, {
+        const chartHeight = card.classList.contains('chart-full') ? 160 : 180;
+
+        const chartInstance = new Chart(ctx, {
             type: "line",
             data: {
                 labels: asset.history.map((_, i) => i),
                 datasets: [{
                     data: asset.history,
-                    borderColor: color,
-                    backgroundColor: createGradient(ctx, color, chartHeight),
-                    borderWidth: 1.5,
+                    borderColor: lineColor,
+                    backgroundColor: createGradient(ctx, lineColor, chartHeight),
+                    borderWidth: 2,
                     pointRadius: 0,
-                    tension: 0.35,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: lineColor,
+                    pointHoverBorderColor: "#fff",
+                    pointHoverBorderWidth: 2,
+                    tension: 0.3,
                     fill: true,
                 }],
             },
@@ -198,23 +252,68 @@ function initCharts(state) {
                 responsive: true,
                 maintainAspectRatio: false,
                 animation: false,
-                plugins: { legend: { display: false } },
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: '#1e2028',
+                        borderColor: 'rgba(255, 255, 255, 0.08)',
+                        borderWidth: 1,
+                        titleFont: { family: "'Inter', sans-serif", size: 11, weight: '500' },
+                        bodyFont: { family: "'Inter', sans-serif", size: 13, weight: '700' },
+                        titleColor: '#8b8e96',
+                        bodyColor: '#fff',
+                        padding: { top: 10, bottom: 10, left: 14, right: 14 },
+                        cornerRadius: 8,
+                        displayColors: false,
+                        callbacks: {
+                            title: () => `${asset.name} (${sym})`,
+                            label: (c) => `$${formatNum(c.parsed.y)}`,
+                        },
+                    },
+                    crosshair: {},
+                },
+                onHover: (event, elements, chart) => {
+                    if (event.type === 'mousemove' && event.x != null) {
+                        chart._crosshairX = event.x;
+                    } else {
+                        chart._crosshairX = null;
+                    }
+                },
                 scales: {
                     x: { display: false },
                     y: {
+                        position: 'right',
                         display: true,
-                        grid: { color: "rgba(34, 46, 68, 0.25)", drawBorder: false },
+                        grid: {
+                            color: "rgba(255, 255, 255, 0.04)",
+                            drawBorder: false,
+                            lineWidth: 1,
+                        },
                         border: { display: false },
                         ticks: {
-                            color: "#3a4a60",
-                            font: { size: 9, family: "'JetBrains Mono', monospace" },
-                            maxTicksLimit: 4,
-                            padding: 6,
+                            color: "#5b5e6b",
+                            font: { size: 10, family: "'Inter', sans-serif", weight: '500' },
+                            maxTicksLimit: 5,
+                            padding: 10,
+                            callback: (val) => '$' + formatCompact(val),
                         },
                     },
                 },
             },
         });
+
+        // Clear crosshair on mouse leave
+        canvas.addEventListener('mouseleave', () => {
+            chartInstance._crosshairX = null;
+            chartInstance.draw();
+        });
+
+        charts[sym] = chartInstance;
     });
 }
 
@@ -224,17 +323,35 @@ function updateCharts(state) {
         if (!chart) return;
         const asset = state.assets[sym];
         const history = asset.history;
+
+        // Dynamic green/red line based on session trend
+        const lineColor = getChartLineColor(history);
         chart.data.labels = history.map((_, i) => i);
         chart.data.datasets[0].data = history;
+        chart.data.datasets[0].borderColor = lineColor;
+        chart.data.datasets[0].pointHoverBackgroundColor = lineColor;
+        chart.data.datasets[0].backgroundColor = createGradient(
+            chart.ctx, lineColor, chart.chartArea ? chart.chartArea.height : 180
+        );
         chart.update("none");
 
-        // Update live price
+        // Update live price with CoinGecko colors
         const priceEl = document.getElementById(`price-${sym}`);
         if (priceEl) {
             priceEl.textContent = `$${formatNum(asset.price)}`;
             const prev = previousPrices[sym] || asset.price;
-            priceEl.className = `chart-price ${asset.price >= prev ? "price-up" : "price-down"}`;
+            const up = asset.price >= prev;
+            priceEl.style.color = up ? CG_GREEN : CG_RED;
             previousPrices[sym] = asset.price;
+        }
+
+        // Update % change badge
+        const badgeEl = document.getElementById(`badge-${sym}`);
+        if (badgeEl) {
+            const chg = asset.change_pct || 0;
+            const chgSign = chg >= 0 ? "+" : "";
+            badgeEl.textContent = `${chgSign}${chg.toFixed(2)}%`;
+            badgeEl.className = `chart-badge ${chg >= 0 ? "up" : "down"}`;
         }
     });
 }
@@ -445,6 +562,12 @@ function formatNum(n) {
     return Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+function formatCompact(n) {
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+    if (n >= 1) return n.toFixed(2);
+    return n.toFixed(4);
+}
+
 function copyCA() {
     const text = document.getElementById("ca-text").textContent;
     navigator.clipboard.writeText(text).then(() => {
@@ -470,7 +593,7 @@ async function pollPrices() {
                 const newPrice = prices[sym];
                 const prev = previousPrices[sym] || newPrice;
                 priceEl.textContent = `$${formatNum(newPrice)}`;
-                priceEl.className = `chart-price ${newPrice >= prev ? "price-up" : "price-down"}`;
+                priceEl.style.color = newPrice >= prev ? CG_GREEN : CG_RED;
                 previousPrices[sym] = newPrice;
             }
         });
