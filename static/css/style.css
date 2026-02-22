@@ -279,6 +279,97 @@ body {
     text-transform: uppercase;
 }
 
+/* ─── GLITCH EFFECT ─────────────────────────────────────── */
+.glitch {
+    position: relative;
+    animation: glitchShift 4s infinite;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.glitch::before {
+    color: var(--cyan);
+    z-index: -1;
+    animation: glitchTop 3s infinite linear alternate-reverse;
+    clip-path: inset(0 0 65% 0);
+}
+
+.glitch::after {
+    color: var(--red);
+    z-index: -1;
+    animation: glitchBottom 2.5s infinite linear alternate-reverse;
+    clip-path: inset(60% 0 0 0);
+}
+
+@keyframes glitchTop {
+    0% { transform: translate(0); }
+    2% { transform: translate(2px, -1px); }
+    4% { transform: translate(-2px, 1px); }
+    6% { transform: translate(0); }
+    20% { transform: translate(0); }
+    22% { transform: translate(-3px, -1px); }
+    24% { transform: translate(3px, 1px); }
+    25% { transform: translate(0); }
+    50% { transform: translate(0); }
+    52% { transform: translate(2px, 1px); }
+    54% { transform: translate(-1px, -2px); }
+    55% { transform: translate(0); }
+    80% { transform: translate(0); }
+    82% { transform: translate(-2px, 2px); }
+    84% { transform: translate(1px, -1px); }
+    85% { transform: translate(0); }
+    100% { transform: translate(0); }
+}
+
+@keyframes glitchBottom {
+    0% { transform: translate(0); }
+    3% { transform: translate(-2px, 1px); }
+    5% { transform: translate(2px, -1px); }
+    7% { transform: translate(0); }
+    30% { transform: translate(0); }
+    32% { transform: translate(3px, 1px); }
+    34% { transform: translate(-3px, -1px); }
+    35% { transform: translate(0); }
+    55% { transform: translate(0); }
+    57% { transform: translate(-1px, -1px); }
+    59% { transform: translate(2px, 2px); }
+    60% { transform: translate(0); }
+    85% { transform: translate(0); }
+    87% { transform: translate(2px, -2px); }
+    89% { transform: translate(-1px, 1px); }
+    90% { transform: translate(0); }
+    100% { transform: translate(0); }
+}
+
+@keyframes glitchShift {
+    0%, 95%, 100% { text-shadow: none; }
+    96% {
+        text-shadow:
+            -2px 0 var(--cyan),
+            2px 0 var(--red);
+    }
+    97% {
+        text-shadow:
+            2px 0 var(--cyan),
+            -2px 0 var(--red);
+    }
+    98% {
+        text-shadow:
+            -1px 0 var(--red),
+            1px 0 var(--cyan);
+    }
+    99% { text-shadow: none; }
+}
+
 .landing-desc {
     font-family: var(--font-body);
     font-size: 0.92rem;
