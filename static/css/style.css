@@ -96,6 +96,112 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   INTRO SEQUENCE OVERLAY
+   ═══════════════════════════════════════════════════════════ */
+#intro-sequence {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #020408;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#intro-sequence.done {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#intro-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 24px;
+    max-width: 600px;
+    width: 100%;
+}
+
+.intro-line {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--green);
+    white-space: nowrap;
+    overflow: hidden;
+    text-shadow: 0 0 8px rgba(22, 199, 132, 0.4);
+    min-height: 1.5em;
+    display: none;
+}
+
+.intro-line.typing {
+    display: block;
+}
+
+.intro-line.typing::after {
+    content: '\2588';
+    animation: blinkCursor 0.5s step-end infinite;
+    margin-left: 1px;
+}
+
+.intro-line.done::after {
+    display: none;
+}
+
+.intro-line.intro-ready {
+    color: var(--cyan);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-top: 8px;
+    text-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+}
+
+@keyframes blinkCursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Scanline overlay on intro */
+#intro-sequence::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 229, 255, 0.015) 2px,
+        rgba(0, 229, 255, 0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Flicker on the whole overlay */
+#intro-sequence::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    animation: introFlicker 0.15s infinite;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.03;
+}
+
+@keyframes introFlicker {
+    0% { background: transparent; }
+    50% { background: rgba(0, 229, 255, 0.04); }
+    100% { background: transparent; }
+}
+
+@media (max-width: 480px) {
+    .intro-line { font-size: 0.7rem; }
+    .intro-line.intro-ready { font-size: 0.85rem; }
+}
+
+/* ═══════════════════════════════════════════════════════════
    LANDING PAGE
    ═══════════════════════════════════════════════════════════ */
 #landing {
@@ -279,95 +385,140 @@ body {
     text-transform: uppercase;
 }
 
-/* ─── GLITCH EFFECT ─────────────────────────────────────── */
-.glitch {
-    position: relative;
-    animation: glitchShift 4s infinite;
+/* ─── FULL-PAGE GLITCH EFFECT ──────────────────────────────── */
+
+/* RGB split layers over the entire landing */
+#landing::before,
+#landing::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    background: inherit;
+    opacity: 0;
 }
 
-.glitch::before,
-.glitch::after {
-    content: attr(data-text);
+#landing::before {
+    animation: glitchLayerCyan 8s infinite;
+    mix-blend-mode: screen;
+    background: rgba(0, 229, 255, 0.06);
+}
+
+#landing::after {
+    animation: glitchLayerRed 8s infinite 0.05s;
+    mix-blend-mode: screen;
+    background: rgba(234, 57, 67, 0.06);
+}
+
+/* Main container jitter */
+#landing-inner {
+    animation: glitchJitter 6s infinite;
+}
+
+/* Scanline overlay */
+.landing-scanlines {
     position: absolute;
-    top: 0;
+    inset: 0;
+    pointer-events: none;
+    z-index: 998;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.08) 2px,
+        rgba(0, 0, 0, 0.08) 4px
+    );
+    animation: glitchScanlines 0.1s infinite;
+}
+
+/* Screen tear bar */
+.landing-tear {
+    position: absolute;
     left: 0;
     right: 0;
-    overflow: hidden;
+    height: 0;
     pointer-events: none;
+    z-index: 1000;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 229, 255, 0.1) 20%,
+        rgba(234, 57, 67, 0.08) 50%,
+        rgba(0, 229, 255, 0.1) 80%,
+        transparent 100%
+    );
+    animation: glitchTear 6s infinite;
 }
 
-.glitch::before {
-    color: var(--cyan);
-    z-index: -1;
-    animation: glitchTop 3s infinite linear alternate-reverse;
-    clip-path: inset(0 0 65% 0);
+@keyframes glitchLayerCyan {
+    0%, 100% { opacity: 0; transform: translate(0); clip-path: none; }
+    15% { opacity: 0; }
+    15.5% { opacity: 1; transform: translate(-4px, 0); clip-path: inset(10% 0 75% 0); }
+    16% { opacity: 1; transform: translate(3px, 0); clip-path: inset(40% 0 30% 0); }
+    16.5% { opacity: 0; transform: translate(0); clip-path: none; }
+    45% { opacity: 0; }
+    45.3% { opacity: 1; transform: translate(-3px, 0); clip-path: inset(60% 0 10% 0); }
+    45.8% { opacity: 1; transform: translate(5px, 0); clip-path: inset(5% 0 80% 0); }
+    46.3% { opacity: 0; transform: translate(0); clip-path: none; }
+    72% { opacity: 0; }
+    72.4% { opacity: 1; transform: translate(4px, 0); clip-path: inset(25% 0 55% 0); }
+    72.8% { opacity: 1; transform: translate(-2px, 0); clip-path: inset(70% 0 5% 0); }
+    73.3% { opacity: 0; transform: translate(0); clip-path: none; }
 }
 
-.glitch::after {
-    color: var(--red);
-    z-index: -1;
-    animation: glitchBottom 2.5s infinite linear alternate-reverse;
-    clip-path: inset(60% 0 0 0);
+@keyframes glitchLayerRed {
+    0%, 100% { opacity: 0; transform: translate(0); clip-path: none; }
+    15.2% { opacity: 0; }
+    15.7% { opacity: 1; transform: translate(4px, 0); clip-path: inset(20% 0 60% 0); }
+    16.2% { opacity: 1; transform: translate(-3px, 0); clip-path: inset(50% 0 25% 0); }
+    16.7% { opacity: 0; transform: translate(0); clip-path: none; }
+    45.1% { opacity: 0; }
+    45.5% { opacity: 1; transform: translate(3px, 0); clip-path: inset(15% 0 65% 0); }
+    46% { opacity: 1; transform: translate(-4px, 0); clip-path: inset(45% 0 35% 0); }
+    46.5% { opacity: 0; transform: translate(0); clip-path: none; }
+    72.2% { opacity: 0; }
+    72.6% { opacity: 1; transform: translate(-5px, 0); clip-path: inset(35% 0 45% 0); }
+    73% { opacity: 1; transform: translate(3px, 0); clip-path: inset(80% 0 0% 0); }
+    73.5% { opacity: 0; transform: translate(0); clip-path: none; }
 }
 
-@keyframes glitchTop {
-    0% { transform: translate(0); }
-    2% { transform: translate(2px, -1px); }
-    4% { transform: translate(-2px, 1px); }
-    6% { transform: translate(0); }
-    20% { transform: translate(0); }
-    22% { transform: translate(-3px, -1px); }
-    24% { transform: translate(3px, 1px); }
-    25% { transform: translate(0); }
-    50% { transform: translate(0); }
-    52% { transform: translate(2px, 1px); }
-    54% { transform: translate(-1px, -2px); }
-    55% { transform: translate(0); }
-    80% { transform: translate(0); }
-    82% { transform: translate(-2px, 2px); }
-    84% { transform: translate(1px, -1px); }
-    85% { transform: translate(0); }
-    100% { transform: translate(0); }
+@keyframes glitchJitter {
+    0%, 100% { transform: translate(0); filter: none; }
+    15.3% { transform: translate(0); }
+    15.5% { transform: translate(-3px, 1px) skewX(-0.5deg); }
+    15.8% { transform: translate(2px, -1px) skewX(0.3deg); }
+    16.2% { transform: translate(0); }
+    45.2% { transform: translate(0); }
+    45.5% { transform: translate(2px, 0) skewX(0.4deg); }
+    45.7% { transform: translate(-1px, 2px) skewX(-0.3deg); }
+    46.1% { transform: translate(0); }
+    72.3% { transform: translate(0); }
+    72.5% { transform: translate(-2px, -1px) skewX(-0.6deg); }
+    72.9% { transform: translate(3px, 1px) skewX(0.2deg); }
+    73.2% { transform: translate(0); }
 }
 
-@keyframes glitchBottom {
-    0% { transform: translate(0); }
-    3% { transform: translate(-2px, 1px); }
-    5% { transform: translate(2px, -1px); }
-    7% { transform: translate(0); }
-    30% { transform: translate(0); }
-    32% { transform: translate(3px, 1px); }
-    34% { transform: translate(-3px, -1px); }
-    35% { transform: translate(0); }
-    55% { transform: translate(0); }
-    57% { transform: translate(-1px, -1px); }
-    59% { transform: translate(2px, 2px); }
-    60% { transform: translate(0); }
-    85% { transform: translate(0); }
-    87% { transform: translate(2px, -2px); }
-    89% { transform: translate(-1px, 1px); }
-    90% { transform: translate(0); }
-    100% { transform: translate(0); }
+@keyframes glitchTear {
+    0%, 100% { top: 0; height: 0; opacity: 0; }
+    15% { top: 0; height: 0; opacity: 0; }
+    15.5% { top: 30%; height: 3px; opacity: 1; transform: scaleX(1.02); }
+    16% { top: 55%; height: 2px; opacity: 0.7; transform: scaleX(0.98); }
+    16.5% { height: 0; opacity: 0; }
+    45.3% { top: 0; height: 0; opacity: 0; }
+    45.6% { top: 65%; height: 4px; opacity: 1; transform: scaleX(1.03); }
+    46% { top: 20%; height: 2px; opacity: 0.6; transform: scaleX(0.97); }
+    46.5% { height: 0; opacity: 0; }
+    72.2% { top: 0; height: 0; opacity: 0; }
+    72.6% { top: 45%; height: 3px; opacity: 0.9; transform: scaleX(1.01); }
+    73% { top: 80%; height: 2px; opacity: 0.5; transform: scaleX(0.99); }
+    73.4% { height: 0; opacity: 0; }
 }
 
-@keyframes glitchShift {
-    0%, 95%, 100% { text-shadow: none; }
-    96% {
-        text-shadow:
-            -2px 0 var(--cyan),
-            2px 0 var(--red);
-    }
-    97% {
-        text-shadow:
-            2px 0 var(--cyan),
-            -2px 0 var(--red);
-    }
-    98% {
-        text-shadow:
-            -1px 0 var(--red),
-            1px 0 var(--cyan);
-    }
-    99% { text-shadow: none; }
+@keyframes glitchScanlines {
+    0% { opacity: 0.4; }
+    50% { opacity: 0.35; }
+    100% { opacity: 0.4; }
 }
 
 .landing-desc {

@@ -633,8 +633,54 @@ function goHome() {
     landing.classList.remove("fade-out");
 }
 
+/* ─── INTRO SEQUENCE ────────────────────────────────────── */
+
+function typeLine(lineEl, text, speed) {
+    return new Promise(resolve => {
+        lineEl.classList.add("typing");
+        lineEl.textContent = "";
+        let i = 0;
+        const interval = setInterval(() => {
+            lineEl.textContent += text[i];
+            i++;
+            if (i >= text.length) {
+                clearInterval(interval);
+                lineEl.classList.add("done");
+                resolve();
+            }
+        }, speed);
+    });
+}
+
+async function runIntroSequence() {
+    const overlay = document.getElementById("intro-sequence");
+    if (!overlay) return;
+
+    // Skip intro if already in arena
+    if (sessionStorage.getItem("inArena") === "1") {
+        overlay.style.display = "none";
+        return;
+    }
+
+    const lines = overlay.querySelectorAll(".intro-line");
+    const charSpeed = 25; // ms per character
+    const linePause = 300; // ms pause between lines
+
+    for (const line of lines) {
+        const text = line.dataset.text || "";
+        await typeLine(line, text, charSpeed);
+        await new Promise(r => setTimeout(r, linePause));
+    }
+
+    // Hold on the final line, then fade out
+    await new Promise(r => setTimeout(r, 1000));
+    overlay.classList.add("done");
+    setTimeout(() => { overlay.style.display = "none"; }, 800);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     refreshIcons();
+    runIntroSequence();
     if (sessionStorage.getItem("inArena") === "1") {
         document.getElementById("landing").style.display = "none";
         document.getElementById("game-wrapper").classList.remove("hidden");
