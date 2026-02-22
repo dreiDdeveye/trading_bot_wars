@@ -3,7 +3,8 @@
     "allow": [
       "Bash(cd:*)",
       "WebSearch",
-      "WebFetch(domain:www.coingecko.com)"
+      "WebFetch(domain:www.coingecko.com)",
+      "Bash(head:*)"
     ]
   }
 }

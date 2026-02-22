@@ -371,8 +371,8 @@ function updateAll(state) {
 /* ─── ROUND & MOOD ───────────────────────────────────────── */
 
 function updateRoundDisplay(state) {
-    document.getElementById("round-display").textContent =
-        `R${state.round}/${state.total_rounds}`;
+    const roundEl = document.getElementById("round-display");
+    if (roundEl) roundEl.textContent = `R${state.round}/${state.total_rounds}`;
 
     const moodEl = document.getElementById("mood-display");
     moodEl.textContent = `${state.market_mood_label}`;
@@ -607,9 +607,38 @@ function startPricePolling() {
     priceInterval = setInterval(pollPrices, 3000);
 }
 
-// Auto-start
+/* ─── LANDING PAGE GATE ──────────────────────────────────── */
+
+function enterArena() {
+    const landing = document.getElementById("landing");
+    const wrapper = document.getElementById("game-wrapper");
+    sessionStorage.setItem("inArena", "1");
+    landing.classList.add("fade-out");
+    setTimeout(() => {
+        landing.style.display = "none";
+        wrapper.classList.remove("hidden");
+        startGame();
+        startPricePolling();
+    }, 600);
+}
+
+function goHome() {
+    sessionStorage.removeItem("inArena");
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+    if (priceInterval) { clearInterval(priceInterval); priceInterval = null; }
+    const landing = document.getElementById("landing");
+    const wrapper = document.getElementById("game-wrapper");
+    wrapper.classList.add("hidden");
+    landing.style.display = "";
+    landing.classList.remove("fade-out");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     refreshIcons();
-    startGame();
-    startPricePolling();
+    if (sessionStorage.getItem("inArena") === "1") {
+        document.getElementById("landing").style.display = "none";
+        document.getElementById("game-wrapper").classList.remove("hidden");
+        startGame();
+        startPricePolling();
+    }
 });
