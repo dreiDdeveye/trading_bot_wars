@@ -194,7 +194,6 @@ function updateCharts(state) {
 
 function updateAll(state) {
     updateRoundDisplay(state);
-    updateAssetTable(state);
     updateCharts(state);
     updateEvents(state);
     updateBreakingNews(state);
@@ -213,32 +212,6 @@ function updateRoundDisplay(state) {
     moodEl.textContent = `Market: ${state.market_mood_label}`;
     moodEl.className = "";
     moodEl.classList.add(state.market_mood_label.toLowerCase());
-}
-
-/* ─── ASSET TABLE ────────────────────────────────────── */
-
-function updateAssetTable(state) {
-    const tbody = document.getElementById("asset-tbody");
-    tbody.innerHTML = "";
-
-    Object.values(state.assets).forEach(asset => {
-        const tr = document.createElement("tr");
-        const chgClass = asset.change_pct >= 0 ? "price-up" : "price-down";
-        const prevPrice = previousPrices[asset.symbol];
-        let flashClass = "";
-        if (prevPrice !== undefined) {
-            flashClass = asset.price > prevPrice ? "flash-up" : asset.price < prevPrice ? "flash-down" : "";
-        }
-
-        tr.innerHTML = `
-            <td><span class="asset-symbol" style="color:${ASSET_COLORS[asset.symbol] || '#fff'}">${asset.symbol}</span></td>
-            <td>${asset.name}</td>
-            <td class="num ${flashClass}">$${formatNum(asset.price)}</td>
-            <td class="num ${chgClass}">${asset.change_pct >= 0 ? "+" : ""}${asset.change_pct.toFixed(2)}%</td>
-        `;
-        tbody.appendChild(tr);
-        previousPrices[asset.symbol] = asset.price;
-    });
 }
 
 /* ─── EVENTS ─────────────────────────────────────────── */
