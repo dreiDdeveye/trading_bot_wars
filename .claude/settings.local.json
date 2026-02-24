@@ -4,7 +4,10 @@
       "Bash(cd:*)",
       "WebSearch",
       "WebFetch(domain:www.coingecko.com)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "Bash(true:*)",
+      "WebFetch(domain:127.0.0.1)",
+      "Bash(ls /c/Users/vicen/trading_bot_wars/public/*.mp4 2>/dev/null | wc -l && ls /c/Users/vicen/trading_bot_wars/public/*.mp4 2>/dev/null)"
     ]
   }
 }

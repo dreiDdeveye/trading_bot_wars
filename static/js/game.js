@@ -678,6 +678,51 @@ async function runIntroSequence() {
     setTimeout(() => { overlay.style.display = "none"; }, 800);
 }
 
+/* ─── BOT PROFILE MODAL ─────────────────────────────────── */
+
+function openBotModal(card) {
+    const overlay = document.getElementById("bot-modal-overlay");
+    const modal = document.getElementById("bot-modal");
+    const color = getComputedStyle(card).getPropertyValue('--bot-color').trim();
+
+    modal.style.setProperty('--modal-color', color);
+
+    // Avatar
+    const profileContainer = document.getElementById("bot-modal-profile");
+    const srcEl = card.querySelector('.bot-card-avatar');
+    if (srcEl.tagName === 'VIDEO') {
+        profileContainer.innerHTML = `<video src="${srcEl.src}" autoplay loop muted playsinline></video>`;
+    } else {
+        profileContainer.innerHTML = `<img src="${srcEl.src}" alt="">`;
+    }
+
+    // Text content
+    document.getElementById("bot-modal-name").textContent = card.querySelector('.bot-card-name').textContent;
+    document.getElementById("bot-modal-motto").textContent = card.querySelector('.bot-card-motto').textContent;
+    document.getElementById("bot-modal-bio").textContent = card.querySelector('.bot-card-bio').textContent;
+
+    // Tags
+    document.getElementById("bot-modal-tags").innerHTML = card.querySelector('.bot-card-tags').innerHTML;
+
+    // Stats
+    const statsContainer = document.getElementById("bot-modal-stats");
+    statsContainer.innerHTML = card.querySelector('.bot-card-stats').innerHTML;
+    statsContainer.querySelectorAll('.bot-stat-fill').forEach(el => {
+        el.style.background = color;
+    });
+
+    overlay.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+
+function closeBotModal(event) {
+    if (event && event.target.closest('#bot-modal') && !event.target.closest('#bot-modal-close')) {
+        return;
+    }
+    document.getElementById("bot-modal-overlay").classList.add("hidden");
+    document.body.style.overflow = "";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     refreshIcons();
     runIntroSequence();
@@ -687,4 +732,71 @@ document.addEventListener("DOMContentLoaded", () => {
         startGame();
         startPricePolling();
     }
+
+    // Clickable bot cards
+    document.querySelectorAll('.bot-card').forEach(card => {
+        card.addEventListener('click', () => openBotModal(card));
+    });
+
+    // Close modal on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeBotModal(e);
+    });
+
+    // Scroll-reveal for bot cards with stagger
+    const botCards = document.querySelectorAll('.bot-card');
+    if (botCards.length) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const card = entry.target;
+                    const idx = Array.from(botCards).indexOf(card);
+                    setTimeout(() => card.classList.add('visible'), idx * 100);
+                    observer.unobserve(card);
+                }
+            });
+        }, { threshold: 0.15 });
+        botCards.forEach(card => observer.observe(card));
+    }
+
+    // Floating particles
+    spawnParticles();
 });
+
+function spawnParticles() {
+    const container = document.getElementById('particles');
+    if (!container) return;
+
+    const colors = ['var(--cyan)', 'var(--green)', 'var(--magenta)', 'var(--gold)', 'var(--purple)'];
+
+    function createParticle() {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 4 + 2;
+        const x = Math.random() * 100;
+        const dur = Math.random() * 10 + 12;
+        const delay = Math.random() * 8;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+
+        p.style.cssText = `
+            width: ${size}px;
+            height: ${size}px;
+            left: ${x}%;
+            background: ${color};
+            box-shadow: 0 0 ${size * 2}px ${color};
+            animation-duration: ${dur}s;
+            animation-delay: ${delay}s;
+        `;
+        container.appendChild(p);
+
+        // Recycle particle
+        setTimeout(() => {
+            p.remove();
+            createParticle();
+        }, (dur + delay) * 1000);
+    }
+
+    for (let i = 0; i < 25; i++) {
+        createParticle();
+    }
+}
